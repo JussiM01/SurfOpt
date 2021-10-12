@@ -1,7 +1,7 @@
 import torch
 
 
-class Optimizer
+class Optimizer:
 
     def __init__(self, params):
 
