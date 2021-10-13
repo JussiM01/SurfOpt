@@ -12,7 +12,7 @@ class Mononomial(nn.Module):
     def forward(self, tensor):
 
         zetas = (self.params['const']
-                 * torch.pow(tensor[:, 0], self.params['power'][0]))
+                 * torch.pow(tensor[:, 0], self.params['power'][0])
                  * torch.pow(tensor[:, 1], self.params['power'][1]))
 
         return zetas
@@ -45,9 +45,9 @@ class Gaussian2D(nn.Module):
     def forward(self, point):
 
         point = point -self.mean
-        value = torch.dot(point, torch.matmul(self.cov_matrix, point))
+        zeta = torch.dot(point, torch.matmul(self.cov_matrix, point))
 
-        return self.const*torch.exp(-value)
+        return self.const*torch.exp(-zeta)
 
 
 class GaussMonom(nn.Module):
@@ -74,11 +74,11 @@ class GaussPoly(nn.Module):
 
     def forward(self, tensor):
 
-        value = torch.zeros_like(tensor)
+        zetas = torch.zeros_like(tensor)
         for func in self.gaussmonoms:
-            value += func(tensor)
+            zetas += func(tensor)
 
-        return value
+        return zetas
 
 
 class SurfaceMap(nn.Module):
