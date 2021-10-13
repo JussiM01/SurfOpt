@@ -11,12 +11,11 @@ class Mononomial(nn.Module):
 
     def forward(self, tensor):
 
-        x_values = (self.params['const'] *
-                    torch.pow(tensor[:, 0], self.params['power'][0]))
-        y_values = (self.params['const'] *
-                    torch.pow(tensor[:, 1], self.params['power'][1]))
+        zetas = (self.params['const']
+                 * torch.pow(tensor[:, 0], self.params['power'][0]))
+                 * torch.pow(tensor[:, 1], self.params['power'][1]))
 
-        return torch.stack([x_values, y_values], axis=1)
+        return zetas
 
 
 class Polynomial(nn.Module):
@@ -28,11 +27,11 @@ class Polynomial(nn.Module):
 
     def forward(self, tensor):
 
-        value = torch.zeros_like(tensor)
+        zetas = torch.zeros_like(tensor)
         for func in self.monomials:
-            value += func(tensor)
+            zetas += func(tensor)
 
-        return value
+        return zetas
 
 
 class Gaussian2D(nn.Module):
