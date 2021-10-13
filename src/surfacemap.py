@@ -11,9 +11,9 @@ class Mononomial(nn.Module):
 
     def forward(self, tensor):
 
-        x_values = (self.params['const'][0] *
+        x_values = (self.params['const'] *
                     torch.pow(tensor[:, 0], self.params['power'][0]))
-        y_values = (self.params['const'][1] *
+        y_values = (self.params['const'] *
                     torch.pow(tensor[:, 1], self.params['power'][1]))
 
         return torch.stack([x_values, y_values], axis=1)
