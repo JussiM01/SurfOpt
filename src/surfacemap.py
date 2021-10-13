@@ -23,7 +23,12 @@ class Polynomial(nn.Module):
     def __init__(self, params):
 
         super(Polynomial, self).__init__()
-        self.monomials = [Mononomial(params[i]) for i range(len(params)))]
+        self.monomials = []
+        for i in range(len(params['const']))
+            sub_params = {}
+            for key, value in params:
+                sub_params[key] = value[i]
+            self.monomials.append(Mononomial(sub_params))
 
     def forward(self, tensor):
 
@@ -70,7 +75,12 @@ class GaussPoly(nn.Module):
     def __init__(self, params):
 
         super(GaussPoly, self).__init__()
-        self.gaussmonoms = [GaussMonom(params[i]) for i range(len(params)))]
+        self.gaussmonoms = []
+        for i in range(len(params['mean']))
+            sub_params = {}
+            for key, value in params:
+                sub_params[key] = value[i]
+            self.gaussmonoms.append(GaussMonom(sub_params))
 
     def forward(self, tensor):
 
