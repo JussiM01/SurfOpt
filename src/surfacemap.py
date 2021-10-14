@@ -7,6 +7,8 @@ class Mononomial(nn.Module):
     def __init__(self, params):
 
         super(Polynomial, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.params = params
 
     def forward(self, tensor):
@@ -23,6 +25,8 @@ class Polynomial(nn.Module):
     def __init__(self, params):
 
         super(Polynomial, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.monomials = []
         for i in range(len(params['const']))
             sub_params = {}
@@ -43,6 +47,8 @@ class Gaussian2D(nn.Module):
 
     def __init__(self, params):
         super(Gaussian2D, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.mean = torch.Tensor(params['mean'])
         self.cov_matrix = torch.Tensor(params['cov'])
         self.const = torch.Tensor(params['const'])
@@ -60,6 +66,8 @@ class GaussMonom(nn.Module):
     def __init__(self, params):
 
         super(GaussMonom, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.func = Gaussian2D(params)
 
     def forward(self, tensor):
@@ -75,6 +83,8 @@ class GaussPoly(nn.Module):
     def __init__(self, params):
 
         super(GaussPoly, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.gaussmonoms = []
         for i in range(len(params['mean']))
             sub_params = {}
@@ -95,6 +105,9 @@ class SurfaceMap(nn.Module):
 
     def __init__(self, params):
 
+        super(GaussPoly, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.functions = []
         if 'poly' in params:
             self.functions.append(Polynomial(params['poly']))
