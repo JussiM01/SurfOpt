@@ -1,75 +1,24 @@
 import pytest
 import torch
 
-from surfacemap import (Gaussian2D, GaussMonom, GaussPoly, Monomial,
+from src.surfacemap import (Gaussian2D, GaussMonom, GaussPoly, Monomial,
     Polynomial, SurfaceMap)
 
 
-@pytest.fixture
-def monomial(constant, powers):
-    params = {
-        'const': constant,
-        'pow': powers_vec
-    }
+device = torch.device("cuda" if torch.cuda.is_available()
+    else "cpu")
 
-    return Monomial(params)
+testdata0 = [
+    [100.0, [2, 3], 10800.0],
+    [10.0, [3, 4], -6480.0],
+    [0.1, [4, 5], 388.8]
+]
 
+tensor0 = torch.Tensor([[-2.0, 3.0]]).to(device)
 
-@pytest.fixture
-def polynomial(constants_list, powers_vec_list):
-    params = {
-        'const': constants_list,
-        'pow': powers_vec_list
-    }
-
-    return Polynomial(params)
-
-
-@pytest.fixture
-def gaussian2d(mean, covariance):
-    params = {
-        'mean': mean,
-        'cov': covariance
-    }
-
-    return Gaussian2D(params)
-
-
-@pytest.fixture
-def gaussmonom(mean, covariance, constant):
-    params = {
-        'mean': mean,
-        'cov': covariance,
-        'const': constant
-    }
-
-    return GaussMonom(params)
-
-
-@pytest.fixture
-def gausspoly(means_list, covariances_list, constants_list):
-    params = {
-        'mean': means_list,
-        'cov': covariances_list,
-        'const': constants_list
-    }
-
-    return GaussMonom(params)
-
-
-@pytest.fixture
-def surfacemap(poly_params, gauss_params):
-    params = {
-        'poly': poly_params,
-        'gauss': gauss_params
-    }
-
-    return SurfaceMap(params)
-
-
-# testdata0 = []
-
-@pytest.mark.parametrize("constant,powers", testdata0)
+@pytest.mark.parametrize("constant,powers,expected", testdata0)
 def test_monomial(constant, powers, expected):
+    model = Monomial({'const': constant, 'pow': powers})
+    result = model(tensor0)
 
-    pass
+    assert expected == result
