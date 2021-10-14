@@ -2,11 +2,11 @@ import torch
 import torch.nn as nn
 
 
-class Mononomial(nn.Module):
+class Monomial(nn.Module):
 
     def __init__(self, params):
 
-        super(Polynomial, self).__init__()
+        super(Monomial, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available()
             else "cpu")
         self.params = params
@@ -14,8 +14,8 @@ class Mononomial(nn.Module):
     def forward(self, tensor):
 
         zetas = (self.params['const']
-                 * torch.pow(tensor[:, 0], self.params['power'][0])
-                 * torch.pow(tensor[:, 1], self.params['power'][1]))
+                 * torch.pow(tensor[:, 0], self.params['pow'][0])
+                 * torch.pow(tensor[:, 1], self.params['pow'][1]))
 
         return zetas
 
@@ -28,11 +28,11 @@ class Polynomial(nn.Module):
         self.device = torch.device("cuda" if torch.cuda.is_available()
             else "cpu")
         self.monomials = []
-        for i in range(len(params['const']))
+        for i in range(len(params['const'])):
             sub_params = {}
             for key, value in params:
                 sub_params[key] = value[i]
-            self.monomials.append(Mononomial(sub_params))
+            self.monomials.append(Monomial(sub_params))
 
     def forward(self, tensor):
 
@@ -86,7 +86,7 @@ class GaussPoly(nn.Module):
         self.device = torch.device("cuda" if torch.cuda.is_available()
             else "cpu")
         self.gaussmonoms = []
-        for i in range(len(params['mean']))
+        for i in range(len(params['mean'])):
             sub_params = {}
             for key, value in params:
                 sub_params[key] = value[i]
