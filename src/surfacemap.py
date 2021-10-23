@@ -74,7 +74,7 @@ class GaussMonom(nn.Module):
 
         zetas = [self.func(t) for t in torch.unbind(tensor, dim=0)]
 
-        return torch.stack(zetas, axis=0)
+        return torch.cat(zetas, axis=0)
 
 
 
