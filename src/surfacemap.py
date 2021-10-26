@@ -105,7 +105,7 @@ class SurfaceMap(nn.Module):
 
     def __init__(self, params):
 
-        super(GaussPoly, self).__init__()
+        super(SurfaceMap, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available()
             else "cpu")
         self.functions = []
