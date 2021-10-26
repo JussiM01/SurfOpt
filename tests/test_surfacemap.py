@@ -1,8 +1,7 @@
 import pytest
 import torch
 
-from src.surfacemap import (Gaussian2D, GaussMonom, GaussPoly, Monomial,
-    Polynomial, SurfaceMap)
+from src.surfacemap import GaussMonom, Monomial, SurfaceMap
 
 
 device = torch.device("cuda" if torch.cuda.is_available()
@@ -39,5 +38,47 @@ def test_gaussmonom(mean, expected):
     params = {'mean': mean, 'cov': [[1.0, 0.0], [0.0, 1.0]], 'const': [1.0]}
     model = GaussMonom(params)
     result = model(tensor1)
+
+    assert torch.equal(expected, result)
+
+
+testdata2 = [
+    [torch.Tensor([[-3.0, -1.0], [-2.0, -1.0], [1.0, -1.0], [-3.0, 1.0],
+                  [-2.0, 1.0], [0.0, 1.0], [1.0, 1.0]]),
+     {'poly': {'const': [[1.0], [3.0]], 'pow': [[3, 1], [2, 1]]}},
+     torch.Tensor([0.0, -4.0, 0.0, -4.0, 0.0, 4.0, 0.0, 4.0])
+    ],
+    [torch.Tensor([[-1.0, 1.0], [0.0, 0.0], [1.0, -1.0]]),
+     {'gauss': {
+                'mean': [[-1.0, 1.0], [1.0, -1.0]],
+                'cov': [[[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]]],
+                'const': [[1.0], [1.0]]}
+                },
+     (torch.exp(torch.Tensor([0.0, -2.0, -8.0]))
+        + torch.exp(torch.Tensor([-8.0, -2.0, 0.0]))
+     )
+    ],
+    [torch.Tensor([[-1.0, 1.0], [0.0, 0.0], [1.0, -1.0], [-1.0, -1.0],
+                   [1.0, 1.0]]),
+     {
+      'poly': {'const': [[1.0], [1.0]], 'pow': [[1.0, 0.0], [0.0, 1.0]]},
+      'gauss': {
+                 'mean': [[-1.0, 1.0], [1.0, -1.0]],
+                 'cov': [[[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]]],
+                 'const': [[1.0], [1.0]]
+                 }
+     },
+     (torch.exp(torch.Tensor([0.0, -2.0, -8.0, -4.0, -4.0]))
+        + torch.exp(torch.tensor([-8.0, -2.0, 0.0, -4.0, -4.0]))
+        + torch.Tensor([0.0, 0.0, 0.0, 2.0, -2.0])
+     )
+     ]
+]
+
+
+@pytest.mark.parametrize("tensor,params,expected", testdata2)
+def test_surfacemap(tensor, params, expected):
+    model = SurfaceMap(params)
+    result = model(tensor)
 
     assert torch.equal(expected, result)
