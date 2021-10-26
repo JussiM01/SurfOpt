@@ -35,7 +35,7 @@ tensor1 = torch.Tensor([[-1.0, 1.0] , [0.0, 0.0], [1.0, -1.0]])
 
 @pytest.mark.parametrize("mean,expected", testdata1)
 def test_gaussmonom(mean, expected):
-    params = {'mean': mean, 'cov': [[1.0, 0.0], [0.0, 1.0]], 'const': [1.0]}
+    params = {'mean': mean, 'cov': [[1.0, 0.0], [0.0, 1.0]], 'const': 1.0}
     model = GaussMonom(params)
     result = model(tensor1)
 
@@ -45,14 +45,14 @@ def test_gaussmonom(mean, expected):
 testdata2 = [
     [torch.Tensor([[-3.0, -1.0], [-2.0, -1.0], [1.0, -1.0], [-3.0, 1.0],
                   [-2.0, 1.0], [0.0, 1.0], [1.0, 1.0]]),
-     {'poly': {'const': [[1.0], [3.0]], 'pow': [[3, 1], [2, 1]]}},
+     {'poly': {'const': [1.0, 3.0], 'pow': [[3, 1], [2, 1]]}},
      torch.Tensor([0.0, -4.0, 0.0, -4.0, 0.0, 4.0, 0.0, 4.0])
     ],
     [torch.Tensor([[-1.0, 1.0], [0.0, 0.0], [1.0, -1.0]]),
      {'gauss': {
                 'mean': [[-1.0, 1.0], [1.0, -1.0]],
                 'cov': [[[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]]],
-                'const': [[1.0], [1.0]]}
+                'const': [1.0, 1.0]}
                 },
      (torch.exp(torch.Tensor([0.0, -2.0, -8.0]))
         + torch.exp(torch.Tensor([-8.0, -2.0, 0.0]))
@@ -61,11 +61,11 @@ testdata2 = [
     [torch.Tensor([[-1.0, 1.0], [0.0, 0.0], [1.0, -1.0], [-1.0, -1.0],
                    [1.0, 1.0]]),
      {
-      'poly': {'const': [[1.0], [1.0]], 'pow': [[1.0, 0.0], [0.0, 1.0]]},
+      'poly': {'const': [1.0, 1.0], 'pow': [[1, 0], [0, 1]]},
       'gauss': {
                  'mean': [[-1.0, 1.0], [1.0, -1.0]],
                  'cov': [[[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]]],
-                 'const': [[1.0], [1.0]]
+                 'const': [1.0, 1.0]
                  }
      },
      (torch.exp(torch.Tensor([0.0, -2.0, -8.0, -4.0, -4.0]))
