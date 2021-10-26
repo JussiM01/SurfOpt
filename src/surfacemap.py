@@ -30,13 +30,13 @@ class Polynomial(nn.Module):
         self.monomials = []
         for i in range(len(params['const'])):
             sub_params = {}
-            for key, value in params:
-                sub_params[key] = value[i]
+            for key in params:
+                sub_params[key] = params[key][i]
             self.monomials.append(Monomial(sub_params))
 
     def forward(self, tensor):
 
-        zetas = torch.zeros_like(tensor)
+        zetas = torch.zeros_like(tensor[:, 0])
         for func in self.monomials:
             zetas += func(tensor)
 
@@ -51,7 +51,7 @@ class Gaussian2D(nn.Module):
             else "cpu")
         self.mean = torch.Tensor(params['mean'])
         self.cov_matrix = torch.Tensor(params['cov'])
-        self.const = torch.Tensor(params['const'])
+        self.const = torch.Tensor([params['const']])
 
     def forward(self, point):
 
@@ -88,14 +88,16 @@ class GaussPoly(nn.Module):
         self.gaussmonoms = []
         for i in range(len(params['mean'])):
             sub_params = {}
-            for key, value in params:
-                sub_params[key] = value[i]
+            for key in params:
+                sub_params[key] = params[key][i]
             self.gaussmonoms.append(GaussMonom(sub_params))
 
     def forward(self, tensor):
 
-        zetas = torch.zeros_like(tensor)
+        zetas = torch.zeros_like(tensor[:, 0])
+        print('T', tensor.shape)
         for func in self.gaussmonoms:
+            print('A', func(tensor).shape)
             zetas += func(tensor)
 
         return zetas
