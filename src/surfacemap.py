@@ -2,21 +2,22 @@ import torch
 import torch.nn as nn
 
 
-class Mononomial(nn.Module):
+class Monomial(nn.Module):
 
     def __init__(self, params):
 
-        super(Polynomial, self).__init__()
+        super(Monomial, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.params = params
 
     def forward(self, tensor):
 
-        x_values = (self.params['const'][0] *
-                    torch.pow(tensor[:, 0], self.params['power'][0]))
-        y_values = (self.params['const'][1] *
-                    torch.pow(tensor[:, 1], self.params['power'][1]))
+        zetas = (self.params['const']
+                 * torch.pow(tensor[:, 0], self.params['pow'][0])
+                 * torch.pow(tensor[:, 1], self.params['pow'][1]))
 
-        return torch.stack([x_values, y_values], axis=1)
+        return zetas
 
 
 class Polynomial(nn.Module):
@@ -24,31 +25,40 @@ class Polynomial(nn.Module):
     def __init__(self, params):
 
         super(Polynomial, self).__init__()
-        self.monomials = [Mononomial(params[i]) for i range(len(params)))]
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
+        self.monomials = []
+        for i in range(len(params['const'])):
+            sub_params = {}
+            for key in params:
+                sub_params[key] = params[key][i]
+            self.monomials.append(Monomial(sub_params))
 
     def forward(self, tensor):
 
-        value = torch.zeros_like(tensor)
+        zetas = torch.zeros_like(tensor[:, 0])
         for func in self.monomials:
-            value += func(tensor)
+            zetas += func(tensor)
 
-        return value
+        return zetas
 
 
 class Gaussian2D(nn.Module):
 
     def __init__(self, params):
         super(Gaussian2D, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.mean = torch.Tensor(params['mean'])
         self.cov_matrix = torch.Tensor(params['cov'])
-        self.const = torch.Tensor(params['const'])
+        self.const = torch.Tensor([params['const']])
 
     def forward(self, point):
 
         point = point -self.mean
-        value = torch.dot(point, torch.matmul(self.cov_matrix, point))
+        zeta = torch.dot(point, torch.matmul(self.cov_matrix, point))
 
-        return self.const*torch.exp(-value)
+        return self.const*torch.exp(-zeta)
 
 
 class GaussMonom(nn.Module):
@@ -56,13 +66,15 @@ class GaussMonom(nn.Module):
     def __init__(self, params):
 
         super(GaussMonom, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.func = Gaussian2D(params)
 
     def forward(self, tensor):
 
         zetas = [self.func(t) for t in torch.unbind(tensor, dim=0)]
 
-        return torch.stack(zetas, axis=0)
+        return torch.cat(zetas, axis=0)
 
 
 
@@ -71,21 +83,31 @@ class GaussPoly(nn.Module):
     def __init__(self, params):
 
         super(GaussPoly, self).__init__()
-        self.gaussmonoms = [GaussMonom(params[i]) for i range(len(params)))]
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
+        self.gaussmonoms = []
+        for i in range(len(params['mean'])):
+            sub_params = {}
+            for key in params:
+                sub_params[key] = params[key][i]
+            self.gaussmonoms.append(GaussMonom(sub_params))
 
     def forward(self, tensor):
 
-        value = torch.zeros_like(tensor)
+        zetas = torch.zeros_like(tensor[:, 0])
         for func in self.gaussmonoms:
-            value += func(tensor)
+            zetas += func(tensor)
 
-        return value
+        return zetas
 
 
 class SurfaceMap(nn.Module):
 
     def __init__(self, params):
 
+        super(SurfaceMap, self).__init__()
+        self.device = torch.device("cuda" if torch.cuda.is_available()
+            else "cpu")
         self.functions = []
         if 'poly' in params:
             self.functions.append(Polynomial(params['poly']))
