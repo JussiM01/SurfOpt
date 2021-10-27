@@ -95,9 +95,7 @@ class GaussPoly(nn.Module):
     def forward(self, tensor):
 
         zetas = torch.zeros_like(tensor[:, 0])
-        print('T', tensor.shape)
         for func in self.gaussmonoms:
-            print('A', func(tensor).shape)
             zetas += func(tensor)
 
         return zetas
