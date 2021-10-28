@@ -1,5 +1,7 @@
 import numpy as np
 
+from utils import sample_arcs, sample_sines
+
 
 class Sampler:
 
@@ -20,23 +22,15 @@ class Sampler:
     def _sample(self, mode, params):
 
         if mode == 'arcs':
-            trajectories = self._sample_arcs(params)
+            trajectories = sample_arcs(params)
 
         elif mode == 'sines':
-            trajectories = self._sample_sines(params)
+            trajectories = sample_sines(params)
 
         else:
             raise NotImplementedError
 
         return trajectories
-
-    def _sample_arcs(self, params):
-
-        raise NotImplementedError
-
-    def _sample_sines(self, params):
-
-        raise NotImplementedError
 
     def _collect(self, trajectories):
 
