@@ -17,22 +17,24 @@ def sample_arcs(params):
     num_angles = params['num_angles']
     min_angle = params['min_angle']
     max_angle = params['max_angle']
+    start = params['start']
+    end = params['end']
     angle_diff = (max_angle - min_angle)/num_angles
     angles = [min_angle + i*angle_diff for i in range(num_angles + 1)]
     num_steps = params['num_steps']
     angles_signs = [(angle, sign) for angle in angles for sign in [-1.0, 1.0]]
 
-    arcs = np.stack([create_arc(angle, num_steps, start_point, end_point, sign)
+    arcs = np.stack([create_arc(angle, num_steps, start, end, sign)
                      for angle, sign in angles_signs], axis=0)
 
     return arcs
 
 
-def create_arc(angle, num_steps, start, end):
+def create_arc(angle, num_steps, start, end, sign):
 
     arc = np.stack(
         [arc_point(step, num_steps, angle, start, end, sign)
-         for i in range(num_steps)], axis=0)
+         for step in range(num_steps)], axis=0)
 
     return arc
 
@@ -57,7 +59,7 @@ def arc_point(step, num_steps, angle, start, end, sign):
 
 def rotate(alpha, point):
     rotation_matrix = np.array(
-        [[np.cos(alpha), -np.sin(alpha)], [np.sin(alpha), np.cos(alpha)])
+        [[np.cos(alpha), -np.sin(alpha)], [np.sin(alpha), np.cos(alpha)]])
 
     return rotation_matrix.dot(point)
 
