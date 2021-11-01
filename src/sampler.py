@@ -52,13 +52,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-ua', '--use_arcs', type=bool, default=True)
-    parser.add_argument('-na', '--num_angles', type=int, default=9)
+    parser.add_argument('-na', '--num_angles', type=int, default=4)
     parser.add_argument('-mi', '--min_angle', type=int, default=np.pi/18)
-    parser.add_argument('-ma', '--max_angle', type=int, default=np.pi/18)
+    parser.add_argument('-ma', '--max_angle', type=int, default=np.pi/4)
     parser.add_argument('-ns', '--num_steps', type=int, default=50)
     parser.add_argument('-x0', '--start_x', type=float, default=-1.0)
     parser.add_argument('-y0', '--start_y', type=float, default=0.0)
-    parser.add_argument('-x1', '--end_x', type=float, default=-1.0)
+    parser.add_argument('-x1', '--end_x', type=float, default=1.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
 
     args = parser.parse_args()
