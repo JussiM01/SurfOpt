@@ -46,13 +46,35 @@ def arc_point(step, num_steps, angle, start, end, sign):
     radius = 1/np.sin(angle)
     x_value = radius*(np.cos(alpha) - np.cos(angle))
     y_value = radius*np.sin(alpha)
+    scale = np.linalg.norm(np.array(end) -np.array(start))
 
     if start[0] == end[0]:
+
+        if end[1] < start[1]:
+            new_start = end
+            new_end = start
+            start = new_start
+            end = new_end
+
         vector = sign*np.array([x_value, y_value])
+        vector = vector -np.array([0.0, -1.0])
+        vector = 0.5*scale*vector
+        vector = vector + np.array(start)
 
     else:
+
+        if end[0] < start[0]:
+            new_start = end
+            new_end = start
+            start = new_start
+            end = new_end
+
+        vector = sign*np.array([y_value, x_value])
+        vector = vector -np.array([-1.0, 0.0])
+        vector = 0.5*scale*vector
         angle_from_x_axis = np.arctan((end[1] -start[1])/(end[0] -start[0]))
-        vector = rotate(angle_from_x_axis, sign*np.array([y_value, x_value]))
+        vector = rotate(angle_from_x_axis, vector)
+        vector = vector + np.array(start)
 
     return vector
 
