@@ -41,8 +41,8 @@ def create_arc(angle, num_steps, start, end, sign):
 
 def arc_point(step, num_steps, angle, start, end, sign):
 
-    step_size = angle/(num_steps -1)
-    alpha = step_size*step -angle*0.5
+    step_size = 2*angle/(num_steps -1)
+    alpha = step_size*step -angle
     radius = 1/np.sin(angle)
     x_value = radius*(np.cos(alpha) - np.cos(angle))
     y_value = radius*np.sin(alpha)
@@ -51,8 +51,8 @@ def arc_point(step, num_steps, angle, start, end, sign):
         vector = sign*np.array([x_value, y_value])
 
     else:
-        angle_from_x_axis = np.arctan((end[0] -start[0])/(end[1] -start[1]))
-        vector = rotate(-angle_from_x_axis, sign*np.array([y_value, x_value]))
+        angle_from_x_axis = np.arctan((end[1] -start[1])/(end[0] -start[0]))
+        vector = rotate(angle_from_x_axis, sign*np.array([y_value, x_value]))
 
     return vector
 
