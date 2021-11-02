@@ -12,10 +12,13 @@ class Sampler:
 
     def __call__(self):
 
-        for mode in self.params:
-            sub_params = self.params[mode]
-            trajectories = self._sample(mode, sub_params)
-            self._collect(trajectories)
+        for mode in {'arcs', 'sines', 'sine_sums'}:
+            if mode in self.params:
+                sub_params = self.params[mode]
+                sub_params['start'] = self.params['start']
+                sub_params['end'] = self.params['end']
+                trajectories = self._sample(mode, sub_params)
+                self._collect(trajectories)
 
         return self.trajectories
 
@@ -63,7 +66,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    params = {}
+    params = {
+        'start': [args.start_x, args.start_y],
+        'end': [args.end_x, args.end_y]
+    }
 
     if args.use_arcs is True:
 
@@ -71,9 +77,7 @@ if __name__ == '__main__':
             'num_angles': args.num_angles,
             'min_angle': args.min_angle,
             'max_angle': args.max_angle,
-            'num_steps': args.num_steps,
-            'start': [args.start_x, args.start_y],
-            'end': [args.end_x, args.end_y]
+            'num_steps': args.num_steps
         }
 
     else:
