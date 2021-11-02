@@ -47,28 +47,32 @@ def arc_point(step, num_steps, angle, start, end, sign):
     x_value = radius*(np.cos(alpha) - np.cos(angle))
     y_value = radius*np.sin(alpha)
     scale = np.linalg.norm(np.array(end) -np.array(start))
+    start, end = reorder(start, end)
+    vector = create_vec(x_value, y_value, scale, sign, start, end)
+
+    return vector
+
+
+def reorder(start, end):
+
+    if (end[0] == start[0]) and (end[1] < start[1]):
+        return end, start
+
+    elif end[0] < start[0]:
+        return end, start
+
+    return start, end
+
+
+def create_vec(x_value, y_value, scale, sign, start, end):
 
     if start[0] == end[0]:
-
-        if end[1] < start[1]:
-            new_start = end
-            new_end = start
-            start = new_start
-            end = new_end
-
         vector = sign*np.array([x_value, y_value])
         vector = vector -np.array([0.0, -1.0])
         vector = 0.5*scale*vector
         vector = vector + np.array(start)
 
     else:
-
-        if end[0] < start[0]:
-            new_start = end
-            new_end = start
-            start = new_start
-            end = new_end
-
         vector = sign*np.array([y_value, x_value])
         vector = vector -np.array([-1.0, 0.0])
         vector = 0.5*scale*vector
@@ -80,6 +84,7 @@ def arc_point(step, num_steps, angle, start, end, sign):
 
 
 def rotate(alpha, point):
+
     rotation_matrix = np.array(
         [[np.cos(alpha), -np.sin(alpha)], [np.sin(alpha), np.cos(alpha)]])
 
