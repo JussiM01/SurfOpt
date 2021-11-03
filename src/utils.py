@@ -12,6 +12,36 @@ def create_plot(params):
     raise NotImplementedError
 
 
+def sample_sines(params):
+
+    zipped = list(zip(params['constants'], params['multiples']))
+    sines = np.stack([create_sine(const, multiple, start, end, num_steps)
+                      for const, multiple in zipped], axis=0)
+
+    return sines
+
+
+def create_sine(const, multiple, start, end, num_steps):
+
+    sine = np.stack(
+        [sine_point(const, multiple, start, end, step, num_steps)
+         for step in range(num_steps)], axis=0)
+
+    return sine
+
+
+def sine_point(const, multiple, start, end, step, num_steps):
+
+    step_size = 2/(num_steps -1)
+    x_value = np.pi*(step_size*step -1)
+    y_value = np.sin(x_value)
+    scale = np.linalg.norm(np.array(end) -np.array(start))
+    start, end = reorder(start, end)
+    vector = create_vec(x_value, y_value, scale, sign, start, end)
+
+    return vector
+
+
 def sample_arcs(params):
 
     num_angles = params['num_angles']
@@ -23,7 +53,6 @@ def sample_arcs(params):
     angles = [min_angle + i*angle_diff for i in range(num_angles + 1)]
     num_steps = params['num_steps']
     angles_signs = [(angle, sign) for angle in angles for sign in [-1.0, 1.0]]
-
     arcs = np.stack([create_arc(angle, num_steps, start, end, sign)
                      for angle, sign in angles_signs], axis=0)
 
