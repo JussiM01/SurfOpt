@@ -12,12 +12,39 @@ def create_plot(params):
     raise NotImplementedError
 
 
+def sample_sine_sums(params):
+
+    start = params['start']
+    end = params['end']
+    num_steps = params['num_steps']
+    up_ranges = params['up_ranges']
+    num_samples = params['num_samples']
+    all_sum_params = []
+    for i in range(num_samples):
+        constants = up_ranges*np.random.random_sample(len(up_ranges))
+        all_sum_params.append(zip(constants, params['multiples']))
+    sine_sums = np.stack([create_sine_sum(sum_params, start, end, num_steps)
+                      for sum_params in all_sum_params], axis=0)
+
+    return sine_sums
+
+
+def create_sine_sum(sum_params, start, end, num_steps):
+    sines = np.stack([create_sine(const, multiple, start, end, num_steps)
+                      for const, multiple in sum_params], axis=0)
+    x_values = np.expand_dims(sines[0, :, 1], axis=1)
+    y_values = np.expand_dims(np.sum(sines[:, :, 0], axis=0), axis=1)
+    sine_sum = np.concatenate([y_values, x_values], axis=1)
+
+    return sine_sum
+
+
 def sample_sines(params):
 
     start = params['start']
     end = params['end']
     num_steps = params['num_steps']
-    zipped = list(zip(params['constants'], params['multiples']))
+    zipped = zip(params['constants'], params['multiples'])
     sines = np.stack([create_sine(const, multiple, start, end, num_steps)
                       for const, multiple in zipped], axis=0)
 
