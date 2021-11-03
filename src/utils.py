@@ -14,6 +14,9 @@ def create_plot(params):
 
 def sample_sines(params):
 
+    start = params['start']
+    end = params['end']
+    num_steps = params['num_steps']
     zipped = list(zip(params['constants'], params['multiples']))
     sines = np.stack([create_sine(const, multiple, start, end, num_steps)
                       for const, multiple in zipped], axis=0)
@@ -33,11 +36,11 @@ def create_sine(const, multiple, start, end, num_steps):
 def sine_point(const, multiple, start, end, step, num_steps):
 
     step_size = 2/(num_steps -1)
-    x_value = np.pi*(step_size*step -1)
-    y_value = np.sin(x_value)
+    x_value = (step_size*step -1)
+    y_value = const*np.sin(multiple*np.pi*x_value)
     scale = np.linalg.norm(np.array(end) -np.array(start))
     start, end = reorder(start, end)
-    vector = create_vec(x_value, y_value, scale, sign, start, end)
+    vector = create_vec(y_value, x_value, scale, 1.0, start, end)
 
     return vector
 
@@ -118,8 +121,3 @@ def rotate(alpha, point):
         [[np.cos(alpha), -np.sin(alpha)], [np.sin(alpha), np.cos(alpha)]])
 
     return rotation_matrix.dot(point)
-
-
-def sample_sines(params):
-
-    raise NotImplementedError

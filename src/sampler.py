@@ -55,6 +55,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-ua', '--use_arcs', type=bool, default=True)
+    parser.add_argument('-us', '--use_sines', type=bool, default=True)
+    parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
+    parser.add_argument('-m', '--multiples', type=str, default='0,1,-1')
     parser.add_argument('-na', '--num_angles', type=int, default=4)
     parser.add_argument('-mi', '--min_angle', type=int, default=np.pi/18)
     parser.add_argument('-ma', '--max_angle', type=int, default=np.pi/4)
@@ -65,6 +68,16 @@ if __name__ == '__main__':
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
 
     args = parser.parse_args()
+
+
+    def unpack(string, mode):
+
+        if mode == 'int':
+            return [int(char) for char in string.split(',')]
+
+        elif mode == 'float':
+            return [float(char) for char in string.split(',')]
+
 
     params = {
         'start': [args.start_x, args.start_y],
@@ -77,6 +90,14 @@ if __name__ == '__main__':
             'num_angles': args.num_angles,
             'min_angle': args.min_angle,
             'max_angle': args.max_angle,
+            'num_steps': args.num_steps
+        }
+
+    if args.use_sines is True:
+
+        params['sines'] = {
+            'constants': unpack(args.constants, 'float'),
+            'multiples': unpack(args.multiples, 'int'),
             'num_steps': args.num_steps
         }
 
