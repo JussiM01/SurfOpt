@@ -30,13 +30,34 @@ def sample_sine_sums(params):
 
 
 def create_sine_sum(sum_params, start, end, num_steps):
-    sines = np.stack([create_sine(const, multiple, start, end, num_steps)
+    
+    sines = np.stack([create_sine(
+                      const, multiple, [0., -1.], [0., 1.], num_steps)
                       for const, multiple in sum_params], axis=0)
     x_values = np.expand_dims(sines[0, :, 1], axis=1)
     y_values = np.expand_dims(np.sum(sines[:, :, 0], axis=0), axis=1)
     sine_sum = np.concatenate([y_values, x_values], axis=1)
+    sine_sum = fix_orientation(sine_sum, start, end)
 
     return sine_sum
+
+
+def fix_orientation(sine_sum, start, end):
+
+    fixed_sum = np.apply_along_axis(
+        lambda point: fix_point(point, start, end), 1, sine_sum)
+
+    return fixed_sum
+
+
+def fix_point(point, start, end):
+
+    x_value, y_value = point[0], point[1]
+    scale = np.linalg.norm(np.array(end) -np.array(start))
+    start, end = reorder(start, end)
+    vector = create_vec(x_value, y_value, scale, 1.0, start, end)
+
+    return vector
 
 
 def sample_sines(params):
