@@ -25,12 +25,13 @@ def sample_sine_sums(params):
         all_sum_params.append(zip(constants, params['multiples']))
     sine_sums = np.stack([create_sine_sum(sum_params, start, end, num_steps)
                       for sum_params in all_sum_params], axis=0)
+    sine_sums = original_order(sine_sums, start, end)
 
     return sine_sums
 
 
 def create_sine_sum(sum_params, start, end, num_steps):
-    
+
     sines = np.stack([create_sine(
                       const, multiple, [0., -1.], [0., 1.], num_steps)
                       for const, multiple in sum_params], axis=0)
@@ -68,6 +69,7 @@ def sample_sines(params):
     zipped = zip(params['constants'], params['multiples'])
     sines = np.stack([create_sine(const, multiple, start, end, num_steps)
                       for const, multiple in zipped], axis=0)
+    sines = original_order(sines, start, end)
 
     return sines
 
@@ -106,6 +108,7 @@ def sample_arcs(params):
     angles_signs = [(angle, sign) for angle in angles for sign in [-1.0, 1.0]]
     arcs = np.stack([create_arc(angle, num_steps, start, end, sign)
                      for angle, sign in angles_signs], axis=0)
+    arcs = original_order(arcs, start, end)
 
     return arcs
 
@@ -142,6 +145,17 @@ def reorder(start, end):
         return end, start
 
     return start, end
+
+
+def original_order(trajectories, start, end):
+
+    if (end[0] == start[0]) and (end[1] < start[1]):
+        return np.flip(trajectories, axis=1)
+
+    elif end[0] < start[0]:
+        return np.flip(trajectories, axis=1)
+
+    return trajectories
 
 
 def create_vec(x_value, y_value, scale, sign, start, end):
