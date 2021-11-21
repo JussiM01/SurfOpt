@@ -13,6 +13,7 @@ class Optimizer:
         self.plot_changes = params['plot_changes']
         self.plot_results = params['plot_results']
         self.save_plots = params['save_plots']
+        self.optim_type = params['optim_type']
 
     def __call__(surface_params, trajectory_params):
 
@@ -32,7 +33,24 @@ class Optimizer:
 
     def _initialize(self, surface_params, trajectory_params):
 
-        raise NotImplementedError
+        sampler = Sampler(trajectory_params)
+        trajectories = sampler()
+        inside_trajs = torch.from_numpy(trajectories[:,1:-1,:])
+        self.surfacemap = SurfaceMap(surface_params)
+        self.optimizer = self._set_optimizer(inside_trajs)
+        self.start_h = self.surfacemap(torch.from_numpy(trajectories[:,0:1,:))
+        self.end_h = self.surfacemap(torch.from_numpy(trajectories[:,-1:,:]))
+
+    def _set_optimizer(self, inside_trajs):
+
+        if self.optim_type == 'Adam':
+            return torch.optim.Adam([inside_trajs], lr=self.learning_rate)
+
+        elif self.optim_type == 'AdamW':
+            return torch.optim.AdamW([inside_trajs], lr=self.learning_rate)
+
+        elif self.optim_type == 'SGD':
+            return torch.optim.SGD([inside_trajs], lr=self.learning_rate)
 
     def _optim_step(self):
 
