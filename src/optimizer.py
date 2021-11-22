@@ -35,7 +35,9 @@ class Optimizer:
 
         sampler = Sampler(trajectory_params)
         trajectories = sampler()
-        inside_trajs = torch.from_numpy(trajectories[:,1:-1,:])
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        inside_trajs = torch.from_numpy(
+            trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self.surfacemap = SurfaceMap(surface_params)
         self.optimizer = self._set_optimizer(inside_trajs)
         self.start_h = self.surfacemap(torch.from_numpy(trajectories[:,0:1,:))
