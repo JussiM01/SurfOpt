@@ -20,6 +20,8 @@ class Sampler:
                 trajectories = self._sample(mode, sub_params)
                 self._collect(trajectories)
 
+        self._fix_end_values()
+
         return self.trajectories
 
     def _sample(self, mode, params):
@@ -47,6 +49,12 @@ class Sampler:
             self.trajectories = np.concatenate(
                 (self.trajectories, trajectories), axis=0)
 
+    def _fix_end_values(self):
+
+        self.trajectories[:,0,:] = np.array(self.params['start'], dtype=float)
+        self.trajectories[:,-1,:] = np.array(self.params['end'], dtype=float)
+
+
 
 if __name__ == '__main__':
 
@@ -57,9 +65,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-ua', '--use_arcs', type=bool, default=False)
-    parser.add_argument('-us', '--use_sines', type=bool, default=False)
-    parser.add_argument('-uss', '--use_sine_sums', type=bool, default=True)
+    parser.add_argument('-ua', '--use_arcs', action='store_true')
+    parser.add_argument('-us', '--use_sines', action='store_true')
+    parser.add_argument('-uss', '--use_sine_sums', action='store_true')
     parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
     parser.add_argument('-m', '--multiples', type=str, default='0,1,-1')
     parser.add_argument('-u', '--up_ranges', type=str, default='1.0,1.0,1.0')
@@ -116,9 +124,6 @@ if __name__ == '__main__':
             'num_steps': args.num_steps
         }
 
-
-    else:
-         raise NotImplementedError
 
     sampler = Sampler(params)
     trajectories = sampler()
