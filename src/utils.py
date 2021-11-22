@@ -105,10 +105,13 @@ def sample_arcs(params):
     angle_diff = (max_angle - min_angle)/num_angles
     angles = [min_angle + i*angle_diff for i in range(num_angles + 1)]
     num_steps = params['num_steps']
-    angles_signs = [(angle, sign) for angle in angles for sign in [-1.0, 1.0]]
-    arcs = np.stack([create_arc(angle, num_steps, start, end, sign)
-                     for angle, sign in angles_signs], axis=0)
-    arcs = original_order(arcs, start, end)
+    pos_arcs = np.stack([create_arc(angle, num_steps, start, end, 1.0)
+                     for angle in angles], axis=0)
+    pos_arcs = original_order(pos_arcs, start, end)
+    neg_arcs = np.stack([create_arc(angle, num_steps, start, end, -1.0)
+                     for angle in angles], axis=0)
+    neg_arcs = original_order(neg_arcs, end, start)
+    arcs = np.concatenate([pos_arcs, neg_arcs], axis=0)
 
     return arcs
 
