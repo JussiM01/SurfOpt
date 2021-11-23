@@ -116,8 +116,20 @@ class SurfaceMap(nn.Module):
 
     def forward(self, plane_points):
 
-        zetas = torch.zeros_like(plane_points[:, 0])
-        for func in self.functions:
-            zetas += func(plane_points)
+        shape = plane_points.shape
+
+        if len(shape) == 2:
+            zetas = torch.zeros_like(plane_points[:, 0])
+            for func in self.functions:
+                zetas += func(plane_points)
+
+        elif len(shape) == 3:
+            all_zetas = []
+            for i in range(shape[0]):
+                zeta_seq = torch.zeros_like(plane_points[0, :, 0])
+                for func in self.functions:
+                    zeta_seq += func(plane_points)
+                all_zetas.append(zeta_seq)
+            zetas = torch.stack(all_zetas, axis=0)
 
         return zetas
