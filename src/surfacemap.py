@@ -128,7 +128,7 @@ class SurfaceMap(nn.Module):
             for i in range(shape[0]):
                 zeta_seq = torch.zeros_like(plane_points[0, :, 0])
                 for func in self.functions:
-                    zeta_seq += func(plane_points)
+                    zeta_seq += func(plane_points[i, :, :])
                 all_zetas.append(zeta_seq)
             zetas = torch.stack(all_zetas, axis=0)
 
