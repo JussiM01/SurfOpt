@@ -2,6 +2,7 @@ import torch
 
 from sampler import Sampler
 from surfacemap import SurfaceMap
+from torch.nn import MSELoss
 
 
 class Optimizer:
@@ -36,10 +37,10 @@ class Optimizer:
         sampler = Sampler(trajectory_params)
         trajectories = sampler()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        inside_trajs = torch.from_numpy(
+        self.inside_trajs = torch.from_numpy(
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self.surfacemap = SurfaceMap(surface_params)
-        self.optimizer = self._set_optimizer(inside_trajs)
+        self.optimizer = self._set_optimizer(self.inside_trajs)
         self.start_h = self.surfacemap(torch.from_numpy(trajectories[:,0:1,:))
         self.end_h = self.surfacemap(torch.from_numpy(trajectories[:,-1:,:]))
 
@@ -56,7 +57,18 @@ class Optimizer:
 
     def _optim_step(self):
 
-        raise NotImplementedError
+        loss = 0
+        inside_hs = self.surfacemap(self.inside_trajs)
+        loss += MSELoss(self.start_h - inside_hs[:,0:1,:])
+        loss += MSELoss(inside_hs[:,-1:,:] - self.end_h)
+        for i in range(inside_hs.shape[1] - 1):
+            loss += MSELoss(inside_hs[:,i:i+1,:] - inside_hs[:,i+1:i+2,:])
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        # Add here the collecting of loss values for the plots.
 
     def _create_changes_plot(self):
 
