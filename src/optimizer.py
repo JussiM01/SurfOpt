@@ -2,7 +2,6 @@ import torch
 
 from sampler import Sampler
 from surfacemap import SurfaceMap
-from torch.nn import MSELoss
 
 
 class Optimizer:
@@ -23,8 +22,8 @@ class Optimizer:
         for i in range(self.num_steps):
             self._optim_step()
 
-        if plot_changes:
-            self._create_changes_plot()
+        if self.plot_changes:
+            self._create_changes_plots()
 
         if self.plot_results:
             self._create_results_plot()
@@ -37,12 +36,15 @@ class Optimizer:
         sampler = Sampler(trajectory_params)
         trajectories = sampler()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.inside_trajs = torch.from_numpy(
+        self._inside_trajs = torch.from_numpy(
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
-        self.surfacemap = SurfaceMap(surface_params)
-        self.optimizer = self._set_optimizer(self.inside_trajs)
-        self.start_h = self.surfacemap(torch.from_numpy(trajectories[:,0:1,:))
-        self.end_h = self.surfacemap(torch.from_numpy(trajectories[:,-1:,:]))
+        self._surfacemap = SurfaceMap(surface_params)
+        self._optimizer = self._set_optimizer(self._inside_trajs)
+        self._start_h = self._surfacemap(torch.from_numpy(trajectories[:,0,:))
+        self._end_h = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
+        self._trajs_copies = []
+        self._loss_copies = []
+        self._best_indices = []
 
     def _set_optimizer(self, inside_trajs):
 
@@ -57,20 +59,30 @@ class Optimizer:
 
     def _optim_step(self):
 
-        loss = 0
-        inside_hs = self.surfacemap(self.inside_trajs)
-        loss += MSELoss(self.start_h - inside_hs[:,0:1,:])
-        loss += MSELoss(inside_hs[:,-1:,:] - self.end_h)
+        self._copy_trajs()
+        inside_hs = self._surfacemap(self._inside_trajs)
+        loss = torch.zeros_like(inside_hs[:,0,:])
+        loss += torch.sum((self._start_h - inside_hs[:,0,:])**2, dim=1)
+        loss += torch.sum((inside_hs[:,-1,:] - self._end_h)**2, dim=1)
         for i in range(inside_hs.shape[1] - 1):
-            loss += MSELoss(inside_hs[:,i:i+1,:] - inside_hs[:,i+1:i+2,:])
+            loss += torch.sum(
+                (inside_hs[:,i,:] - inside_hs[:,i+1,:])**2, dim=1)
 
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
+        self._optimizer.zero_grad()
+        mean_loss = torch.mean(loss)
+        mean_loss.backward()
+        self._optimizer.step()
+        self._copy_losses(loss)
 
-        # Add here the collecting of loss values for the plots.
+    def _copy_trajs(self):
+        # Saves a copy of the current trajectories (with end points) as a list.
+        raise NotImplementedError
 
-    def _create_changes_plot(self):
+    def _copy_losses(self, loss):
+        # Saves a copy of the current loss and best index (list & float).
+        raise NotImplementedError
+
+    def _create_changes_plots(self):
 
         raise NotImplementedError
 
