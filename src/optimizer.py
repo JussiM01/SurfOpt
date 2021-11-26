@@ -1,5 +1,6 @@
 import torch
 
+from copy import deepcopy
 from sampler import Sampler
 from surfacemap import SurfaceMap
 
@@ -36,15 +37,17 @@ class Optimizer:
         sampler = Sampler(trajectory_params)
         trajectories = sampler()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self._starts = torch.from_numpy(trajectories[:,0:1,:])
+        self._ends = torch.from_numpy(trajectories[:,-1:,:])
         self._inside_trajs = torch.from_numpy(
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
         self._optimizer = self._set_optimizer(self._inside_trajs)
-        self._start_h = self._surfacemap(torch.from_numpy(trajectories[:,0,:))
-        self._end_h = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
-        self._trajs_copies = []
-        self._loss_copies = []
+        self._start_hs = self._surfacemap(torch.from_numpy(trajectories[:,0,:))
+        self._end_hs = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
+        self._loss_copies = {'losses': [], 'mean_losses': []}
         self._best_indices = []
+        self._trajs_copies = []
 
     def _set_optimizer(self, inside_trajs):
 
@@ -62,8 +65,8 @@ class Optimizer:
         self._copy_trajs()
         inside_hs = self._surfacemap(self._inside_trajs)
         loss = torch.zeros_like(inside_hs[:,0,:])
-        loss += torch.sum((self._start_h - inside_hs[:,0,:])**2, dim=1)
-        loss += torch.sum((inside_hs[:,-1,:] - self._end_h)**2, dim=1)
+        loss += torch.sum((self._start_hs - inside_hs[:,0,:])**2, dim=1)
+        loss += torch.sum((inside_hs[:,-1,:] - self._end_hs)**2, dim=1)
         for i in range(inside_hs.shape[1] - 1):
             loss += torch.sum(
                 (inside_hs[:,i,:] - inside_hs[:,i+1,:])**2, dim=1)
@@ -72,15 +75,20 @@ class Optimizer:
         mean_loss = torch.mean(loss)
         mean_loss.backward()
         self._optimizer.step()
-        self._copy_losses(loss)
+        self._copy_losses(loss, mean_loss)
 
     def _copy_trajs(self):
-        # Saves a copy of the current trajectories (with end points) as a list.
-        raise NotImplementedError
 
-    def _copy_losses(self, loss):
-        # Saves a copy of the current loss and best index (list & float).
-        raise NotImplementedError
+        inside_trajs = deepcopy(self._inside_trajs)
+        inside_trajs = inside_trajs.cpu().detach()
+        trajs = torch.cat([self._starts, inside_trajs, self._ends], dim=1)
+        self._trajs_copies.append(trajs.tolist())
+
+    def _copy_losses(self, loss, mean_loss):
+
+        self._best_indices.append(torch.argmin(loss).item())
+        self._loss_copies['losses'].append(loss.tolist())
+        self._loss_copies['mean_losses'].append(mean_loss.item())
 
     def _create_changes_plots(self):
 
