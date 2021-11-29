@@ -3,6 +3,7 @@ import torch
 from copy import deepcopy
 from sampler import Sampler
 from surfacemap import SurfaceMap
+from utils import create_grid, create_plot
 
 
 class Optimizer:
@@ -15,6 +16,7 @@ class Optimizer:
         self.plot_results = params['plot_results']
         self.save_plots = params['save_plots']
         self.optim_type = params['optim_type']
+        self.fig_params = params['fig']
 
     def __call__(surface_params, trajectory_params):
 
@@ -45,6 +47,7 @@ class Optimizer:
         self._optimizer = self._set_optimizer(self._inside_trajs)
         self._start_hs = self._surfacemap(torch.from_numpy(trajectories[:,0,:))
         self._end_hs = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
+        self._grid = create_grid(self.fix_params['grid'], self._surfacemap)
         self._loss_copies = {'losses': [], 'mean_losses': []}
         self._best_indices = []
         self._trajs_copies = []
