@@ -1,15 +1,31 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 
-def create_countours(params):
+def create_grid(params, surfacemap):
 
-    raise NotImplementedError
+    x = np.linspace(params['x_min'], params['x_max'], params['x_size'])
+    y = np.linspace(params['y_min'], params['y_max'], params['y_size'])
+
+    X, Y = np.meshgrid(x, y)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    grid_tensor = torch.from_numpy(np.stack([X, Y], axis=2)).to(device)
+    zs_tensor = surfacemap(gird_tensor)
+    Z = zs_tensor.cpu().numpy()
+
+    return X, Y, Z
 
 
 def create_plot(params):
 
-    raise NotImplementedError
+    fig = plt.figure(figsize=(7, 7))
+    ax = fig.add_axes([0.1, 0.1, 0.8, 0.8], frameon=True)
+    ax.set_xlim(-params['bound'], params['bound'])
+    ax.set_ylim(-params['bound'], params['bound'])
+    ax.grid(True)
+
+    return fix, ax
 
 
 def sample_sine_sums(params):
