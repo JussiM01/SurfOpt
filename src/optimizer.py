@@ -37,8 +37,10 @@ class Optimizer:
         if self.plot_results:
             self._create_results_plot()
 
-        # Return here the trajectory which has the lowest lenght
-        # after the optimization.
+        best_index = self._best_indices[-1]
+        optimized_trajectory = self._trajs_copies[-1][best_index,:,:]
+
+        return optimized_trajectory
 
     def _initialize(self, surface_params, trajectory_params):
 
@@ -54,7 +56,7 @@ class Optimizer:
         self._optimizer = self._set_optimizer(self._inside_trajs)
         self._start_hs = self._surfacemap(torch.from_numpy(trajectories[:,0,:))
         self._end_hs = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
-        self._grid = create_grid(self.fix_params['grid'], self._surfacemap)
+        self._grid = create_grid(self.fig_params['grid'], self._surfacemap)
         self._loss_copies = {'losses': [], 'mean_losses': []}
         self._best_indices = []
         self._trajs_copies = []
@@ -104,7 +106,7 @@ class Optimizer:
 
         colormap = cm.get_cmap('inferno', self.num_steps)
         for i in range(self._num_trajs):
-            fix, ax = create_plot(self.fix_params)
+            fig, ax = create_plot(self.fig_params)
             plt.rcParams['contour.negative_linestyle'] = 'solid'
             X, Y, Z = self._grid
             ax.contour(X, Y, Z, colors='lightgray')
@@ -118,17 +120,31 @@ class Optimizer:
 
     def _create_best_traj_plot(self):
 
-        fix, ax = create_plot(self.fix_params)
+        fig, ax = create_plot(self.fig_params)
         plt.rcParams['contour.negative_linestyle'] = 'solid'
         X, Y, Z = self._grid
         ax.contour(X, Y, Z, colors='lightgray')
         best_index = self._best_indices[-1]
         xs = self._trajs_copies[-1][best_index,:,0]
-        xs = self._trajs_copies[-1][best_index,:,0]
+        ys = self._trajs_copies[-1][best_index,:,1]
         ax.plot(xs, ys, color='k')
         ax.set_title('Best trajectory after optimization')
         plt.show()
 
     def _create_results_plot(self):
 
-        raise NotImplementedError
+        fig, ax = create_plot(self.fig_params)
+        colormap = cm.get_cmap('winter', self.num_steps)
+        xs = [j for j in range(self.num_steps)]
+        for i in range(self._num_trajs):
+            label = 'trajectory {} losses'.format(i)
+            ys = [self._loss_copies['losses'][i][j]
+                  for j in range(self.num_steps)]
+            ax.plot(xs, ys, color=colormap.colors[i], label=label)
+        ys = [self._loss_copies['mean_losses'][i][j]
+              for j in range(self.num_steps)]
+        ax.plot(xs, ys, color='k', label='mean losses')
+        ax.set_xlabel('Optimization step')
+        ax.set_ylabel('Loss')
+        ax.set_title('Losses')
+        plt.show()
