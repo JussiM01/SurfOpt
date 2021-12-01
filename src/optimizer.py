@@ -1,6 +1,8 @@
+import matplotlib.pyplot as plt
 import torch
 
 from copy import deepcopy
+from matplotlib import cm
 from sampler import Sampler
 from surfacemap import SurfaceMap
 from utils import create_grid, create_plot
@@ -13,6 +15,7 @@ class Optimizer:
         self.num_steps = params['num_steps']
         self.learning_rate = params['learning_rate']
         self.plot_changes = params['plot_changes']
+        self.plot_best_traj = params['plot_best']
         self.plot_results = params['plot_results']
         self.save_plots = params['save_plots']
         self.optim_type = params['optim_type']
@@ -28,6 +31,9 @@ class Optimizer:
         if self.plot_changes:
             self._create_changes_plots()
 
+        if self.plot_best_traj:
+            self._create_best_traj_plot()
+
         if self.plot_results:
             self._create_results_plot()
 
@@ -39,6 +45,7 @@ class Optimizer:
         sampler = Sampler(trajectory_params)
         trajectories = sampler()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self._num_trajs = trajectories.shape[0]
         self._starts = torch.from_numpy(trajectories[:,0:1,:])
         self._ends = torch.from_numpy(trajectories[:,-1:,:])
         self._inside_trajs = torch.from_numpy(
@@ -85,7 +92,7 @@ class Optimizer:
         inside_trajs = deepcopy(self._inside_trajs)
         inside_trajs = inside_trajs.cpu().detach()
         trajs = torch.cat([self._starts, inside_trajs, self._ends], dim=1)
-        self._trajs_copies.append(trajs.tolist())
+        self._trajs_copies.append(trajs.numpy())
 
     def _copy_losses(self, loss, mean_loss):
 
@@ -95,7 +102,32 @@ class Optimizer:
 
     def _create_changes_plots(self):
 
-        raise NotImplementedError
+        colormap = cm.get_cmap('inferno', self.num_steps)
+        for i in range(self._num_trajs):
+            fix, ax = create_plot(self.fix_params)
+            plt.rcParams['contour.negative_linestyle'] = 'solid'
+            X, Y, Z = self._grid
+            ax.contour(X, Y, Z, colors='lightgray')
+            for j in range(self.num_steps):
+                label = 'opt. step {}'.format(j)
+                xs = self._trajs_copies[j][i,:,0]
+                ys = self._trajs_copies[j][i,:,1]
+                ax.plot(xs, ys, color=colormap.colors[j], label=label)
+            ax.set_title('Optimization steps of the trajectory {}'.format(i))
+            plt.show()
+
+    def _create_best_traj_plot(self):
+
+        fix, ax = create_plot(self.fix_params)
+        plt.rcParams['contour.negative_linestyle'] = 'solid'
+        X, Y, Z = self._grid
+        ax.contour(X, Y, Z, colors='lightgray')
+        best_index = self._best_indices[-1]
+        xs = self._trajs_copies[-1][best_index,:,0]
+        xs = self._trajs_copies[-1][best_index,:,0]
+        ax.plot(xs, ys, color='k')
+        ax.set_title('Best trajectory after optimization')
+        plt.show()
 
     def _create_results_plot(self):
 
