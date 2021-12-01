@@ -141,7 +141,7 @@ class Optimizer:
             ys = [self._loss_copies['losses'][i][j]
                   for j in range(self.num_steps)]
             ax.plot(xs, ys, color=colormap.colors[i], label=label)
-        ys = [self._loss_copies['mean_losses'][i][j]
+        ys = [self._loss_copies['mean_losses'][j]
               for j in range(self.num_steps)]
         ax.plot(xs, ys, color='k', label='mean losses')
         ax.set_xlabel('Optimization step')
