@@ -12,7 +12,7 @@ class Optimizer:
 
     def __init__(self, params):
 
-        self.num_steps = params['num_steps']
+        self.num_opt_steps = params['num_opt_steps']
         self.learning_rate = params['learning_rate']
         self.plot_changes = params['plot_changes']
         self.plot_best_traj = params['plot_best']
@@ -25,7 +25,7 @@ class Optimizer:
 
         self._initialize(surface_params, trajectory_params)
 
-        for i in range(self.num_steps):
+        for i in range(self.num_opt_steps):
             self._optim_step()
 
         if self.plot_changes:
@@ -104,13 +104,13 @@ class Optimizer:
 
     def _create_changes_plots(self):
 
-        colormap = cm.get_cmap('inferno', self.num_steps)
+        colormap = cm.get_cmap('inferno', self.num_opt_steps)
         for i in range(self._num_trajs):
             fig, ax = create_plot(self.fig_params)
             plt.rcParams['contour.negative_linestyle'] = 'solid'
             X, Y, Z = self._grid
             ax.contour(X, Y, Z, colors='lightgray')
-            for j in range(self.num_steps):
+            for j in range(self.num_opt_steps):
                 label = 'opt. step {}'.format(j)
                 xs = self._trajs_copies[j][i,:,0]
                 ys = self._trajs_copies[j][i,:,1]
@@ -134,15 +134,15 @@ class Optimizer:
     def _create_results_plot(self):
 
         fig, ax = create_plot(self.fig_params)
-        colormap = cm.get_cmap('winter', self.num_steps)
-        xs = [j for j in range(self.num_steps)]
+        colormap = cm.get_cmap('winter', self.num_opt_steps)
+        xs = [j for j in range(self.num_opt_steps)]
         for i in range(self._num_trajs):
             label = 'trajectory {} losses'.format(i)
             ys = [self._loss_copies['losses'][i][j]
-                  for j in range(self.num_steps)]
+                  for j in range(self.num_opt_steps)]
             ax.plot(xs, ys, color=colormap.colors[i], label=label)
         ys = [self._loss_copies['mean_losses'][j]
-              for j in range(self.num_steps)]
+              for j in range(self.num_opt_steps)]
         ax.plot(xs, ys, color='k', label='mean losses')
         ax.set_xlabel('Optimization step')
         ax.set_ylabel('Loss')
