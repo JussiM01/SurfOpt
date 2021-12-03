@@ -21,7 +21,7 @@ class Optimizer:
         self.optim_type = params['optim_type']
         self.fig_params = params['fig']
 
-    def __call__(surface_params, trajectory_params):
+    def __call__(self, surface_params, trajectory_params):
 
         self._initialize(surface_params, trajectory_params)
 
