@@ -61,22 +61,34 @@ if __name__ == '__main__':
         }
 
     trajectory_params = {
-        'use_arcs': args.use_arcs,
-        'use_sines': args.use_sines,
-        'use_sine_sums': args.use_sine_sums,
-        'constants': args.constants,
-        'multiples': args.multiples,
-        'up_ranges': args.up_ranges,
-        'num_samples': args.num_samples,
-        'num_angles': args.num_angles,
-        'min_angle': args.min_angle,
-        'max_angle': args.max_angle,
-        'num_steps': args.num_steps,
-        'start_x': args.start_x,
-        'start_y': args.start_y,
-        'end_x': args.end_x,
-        'end_y': args.end_y,
-        'print_best': args.print_best
+        'start': [args.start_x, args.start_y],
+        'end': [args.end_x, args.end_y]
+    }
+
+    if args.use_arcs is True:
+
+        trajectory_params['arcs'] = {
+            'num_angles': args.num_angles,
+            'min_angle': args.min_angle,
+            'max_angle': args.max_angle,
+            'num_steps': args.num_steps
+        }
+
+    if args.use_sines is True:
+
+        trajectory_params['sines'] = {
+            'constants': unpack(args.constants, 'float'),
+            'multiples': unpack(args.multiples, 'int'),
+            'num_steps': args.num_steps
+        }
+
+    if args.use_sine_sums is True:
+
+        trajectory_params['sine_sums'] = {
+            'up_ranges': unpack(args.up_ranges, 'float'),
+            'multiples': unpack(args.multiples, 'int'),
+            'num_samples': args.num_samples,
+            'num_steps': args.num_steps
         }
 
     params = {
