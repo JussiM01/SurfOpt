@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import os
 
 from src.optimizer import Optimizer
 from src.utils import load_config
