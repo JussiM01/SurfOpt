@@ -3,9 +3,9 @@ import torch
 
 from copy import deepcopy
 from matplotlib import cm
-from sampler import Sampler
-from surfacemap import SurfaceMap
-from utils import create_grid, create_plot
+from src.sampler import Sampler
+from src.surfacemap import SurfaceMap
+from src.utils import create_grid, create_plot
 
 
 class Optimizer:
@@ -54,7 +54,8 @@ class Optimizer:
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
         self._optimizer = self._set_optimizer(self._inside_trajs)
-        self._start_hs = self._surfacemap(torch.from_numpy(trajectories[:,0,:))
+        self._start_hs = self._surfacemap(
+            torch.from_numpy(trajectories[:,0,:]))
         self._end_hs = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
         self._grid = create_grid(self.fig_params['grid'], self._surfacemap)
         self._loss_copies = {'losses': [], 'mean_losses': []}
