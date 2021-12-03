@@ -1,6 +1,8 @@
 import argparse
+import numpy as np
 
-from optimizer import Optimizer
+from src.optimizer import Optimizer
+from src.utils import load_config
 
 
 def main(params):
@@ -16,6 +18,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('-f', '--conf_file', type=str, default='default.json')
     parser.add_argument('-no', '--num_opt_steps', type=int, default=10)
     parser.add_argument('-l', '--learning_rate', type=float, default=0.001)
     parser.add_argument('-pc', '--plot_changes', action='store_true')
@@ -39,11 +42,11 @@ if __name__ == '__main__':
     parser.add_argument('-y0', '--start_y', type=float, default=0.0)
     parser.add_argument('-x1', '--end_x', type=float, default=1.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
-    parser.add_argument('-pr', '--print_best', action='store_true')
+    parser.add_argument('-prb', '--print_best', action='store_true')
 
     args = parser.parse_args()
 
-    # surface_params = # (read from config-file)
+    surface_params = load_config(args.conf_file)
 
     optimizer_params = {
         'num_opt_steps': args.num_opt_steps,
@@ -53,7 +56,7 @@ if __name__ == '__main__':
         'plot_results': args.plot_results,
         'save_plots': args.save_plots,
         'optim_type': args.optim_type,
-        'fig': = {'bound': args.bound} # CHANGE this and/or add more k,v pairs?
+        'fig': {'bound': args.bound} # CHANGE this and/or add more k,v pairs?
         }
 
     trajectory_params = {
