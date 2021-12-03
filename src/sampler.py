@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import sample_arcs, sample_sines, sample_sine_sums
+from src.utils import sample_arcs, sample_sines, sample_sine_sums
 
 
 class Sampler:
