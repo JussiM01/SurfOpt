@@ -7,7 +7,7 @@ import torch
 
 def load_config(filename):
 
-    config_file = os.path.join('config_files',  filename)
+    config_file = os.path.join('SurfaceTrajOpt/config_files',  filename)
     print(config_file)
     with open(config_file, 'r') as conf_file:
         config = json.load(conf_file)
