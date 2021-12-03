@@ -1,6 +1,18 @@
+import json
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import torch
+
+
+def load_config(filename):
+
+    config_file = os.path.join('config_files',  filename)
+    print(config_file)
+    with open(config_file, 'r') as conf_file:
+        config = json.load(conf_file)
+
+    return config
 
 
 def create_grid(params, surfacemap):
