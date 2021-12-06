@@ -43,16 +43,18 @@ class Sampler:
     def _collect(self, trajectories):
 
         if self.trajectories is None:
-            self.trajectories = trajectories
+            self.trajectories = trajectories.astype('float32')
 
         else:
             self.trajectories = np.concatenate(
-                (self.trajectories, trajectories), axis=0)
+                (self.trajectories, trajectories.astype('float32')), axis=0)
 
     def _fix_end_values(self):
 
-        self.trajectories[:,0,:] = np.array(self.params['start'], dtype=float)
-        self.trajectories[:,-1,:] = np.array(self.params['end'], dtype=float)
+        self.trajectories[:,0,:] = np.array(
+            self.params['start'], dtype='float32')
+        self.trajectories[:,-1,:] = np.array(
+            self.params['end'], dtype='float32')
 
 
 
