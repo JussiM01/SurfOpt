@@ -44,6 +44,14 @@ if __name__ == '__main__':
     parser.add_argument('-x1', '--end_x', type=float, default=1.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
     parser.add_argument('-prb', '--print_best', action='store_true')
+    parser.add_argument('-xmi', '--x_min', type=float, default=100.0)
+    parser.add_argument('-xma', '--x_max', type=float, default=100.0)
+    parser.add_argument('-ymi', '--y_min', type=float, default=100.0)
+    parser.add_argument('-yma', '--y_max', type=float, default=100.0)
+    parser.add_argument('-xs', '--x_size', type=int, default=50)
+    parser.add_argument('-ys', '--y_size', type=int, default=50)
+
+
 
     args = parser.parse_args()
 
@@ -57,7 +65,19 @@ if __name__ == '__main__':
         'plot_results': args.plot_results,
         'save_plots': args.save_plots,
         'optim_type': args.optim_type,
-        'fig': {'bound': args.bound} # CHANGE this and/or add more k,v pairs?
+        'fig': { # CHANGE these and/or add more k,v pairs ?
+            'grid': {
+                'x_min': args.x_min,
+                'x_max': args.x_max,
+                'y_min': args.y_min,
+                'y_max': args.y_max,
+                'x_size': args.x_size,
+                'y_size': args.y_size
+                },
+            'plot': {
+                'bound': args.bound
+                }
+            }
         }
 
     trajectory_params = {

@@ -107,7 +107,7 @@ class Optimizer:
 
         colormap = cm.get_cmap('inferno', self.num_opt_steps)
         for i in range(self._num_trajs):
-            fig, ax = create_plot(self.fig_params)
+            fig, ax = create_plot(self.fig_params['plot'])
             plt.rcParams['contour.negative_linestyle'] = 'solid'
             X, Y, Z = self._grid
             ax.contour(X, Y, Z, colors='lightgray')
@@ -121,7 +121,7 @@ class Optimizer:
 
     def _create_best_traj_plot(self):
 
-        fig, ax = create_plot(self.fig_params)
+        fig, ax = create_plot(self.fig_params['plot'])
         plt.rcParams['contour.negative_linestyle'] = 'solid'
         X, Y, Z = self._grid
         ax.contour(X, Y, Z, colors='lightgray')
@@ -134,7 +134,7 @@ class Optimizer:
 
     def _create_results_plot(self):
 
-        fig, ax = create_plot(self.fig_params)
+        fig, ax = create_plot(self.fig_params['plot'])
         colormap = cm.get_cmap('winter', self.num_opt_steps)
         xs = [j for j in range(self.num_opt_steps)]
         for i in range(self._num_trajs):
