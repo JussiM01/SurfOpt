@@ -48,15 +48,16 @@ class Optimizer:
         trajectories = sampler()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self._num_trajs = trajectories.shape[0]
-        self._starts = torch.from_numpy(trajectories[:,0:1,:])
-        self._ends = torch.from_numpy(trajectories[:,-1:,:])
+        self._starts = torch.from_numpy(trajectories[:,0:1,:]).to(device)
+        self._ends = torch.from_numpy(trajectories[:,-1:,:]).to(device)
         self._inside_trajs = torch.from_numpy(
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
         self._optimizer = self._set_optimizer(self._inside_trajs)
         self._start_hs = self._surfacemap(
-            torch.from_numpy(trajectories[:,0,:]))
-        self._end_hs = self._surfacemap(torch.from_numpy(trajectories[:,-1,:]))
+            torch.from_numpy(trajectories[:,0,:]).to(device))
+        self._end_hs = self._surfacemap(
+            torch.from_numpy(trajectories[:,-1,:]).to(device))
         self._grid = create_grid(self.fig_params['grid'], self._surfacemap)
         self._loss_copies = {'losses': [], 'mean_losses': []}
         self._best_indices = []
