@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 
 from copy import deepcopy
@@ -48,8 +49,8 @@ class Optimizer:
         trajectories = sampler()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self._num_trajs = trajectories.shape[0]
-        self._starts = torch.from_numpy(trajectories[:,0:1,:]).to(device)
-        self._ends = torch.from_numpy(trajectories[:,-1:,:]).to(device)
+        self._starts = trajectories[:,0:1,:]
+        self._ends = trajectories[:,-1:,:]
         self._inside_trajs = torch.from_numpy(
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
@@ -94,9 +95,11 @@ class Optimizer:
     def _copy_trajs(self):
 
         inside_trajs = deepcopy(self._inside_trajs)
-        inside_trajs = inside_trajs.cpu().detach()
-        trajs = torch.cat([self._starts, inside_trajs, self._ends], dim=1)
-        self._trajs_copies.append(trajs.numpy())
+        inside_trajs = inside_trajs.cpu().detach().numpy()
+        starts = deepcopy(self._starts)
+        ends = deepcopy(self._ends)
+        trajs = np.concatenate([starts, inside_trajs, ends], axis=1)
+        self._trajs_copies.append(trajs)
 
     def _copy_losses(self, loss, mean_loss):
 
