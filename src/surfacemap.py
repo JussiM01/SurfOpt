@@ -49,9 +49,9 @@ class Gaussian2D(nn.Module):
         super(Gaussian2D, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available()
             else "cpu")
-        self.mean = torch.Tensor(params['mean'])
-        self.cov_matrix = torch.Tensor(params['cov'])
-        self.const = torch.Tensor([params['const']])
+        self.mean = torch.Tensor(params['mean']).to(self.device)
+        self.cov_matrix = torch.Tensor(params['cov']).to(self.device)
+        self.const = torch.Tensor([params['const']]).to(self.device)
 
     def forward(self, point):
 
