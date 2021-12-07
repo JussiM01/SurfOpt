@@ -64,6 +64,8 @@ if __name__ == '__main__':
 
     import matplotlib.pyplot as plt
 
+    from src.utils import unpack
+
 
     parser = argparse.ArgumentParser()
 
@@ -84,15 +86,6 @@ if __name__ == '__main__':
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
 
     args = parser.parse_args()
-
-
-    def unpack(string, mode):
-
-        if mode == 'int':
-            return [int(char) for char in string.split(',')]
-
-        elif mode == 'float':
-            return [float(char) for char in string.split(',')]
 
 
     params = {
