@@ -29,7 +29,7 @@ def create_grid(params, surfacemap):
     x = np.linspace(params['x_min'], params['x_max'], params['x_size'])
     y = np.linspace(params['y_min'], params['y_max'], params['y_size'])
 
-    X, Y = np.meshgrid(x, y)
+    X, Y = np.meshgrid(x.astype('float32'), y.astype('float32'))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     grid_tensor = torch.from_numpy(np.stack([X, Y], axis=2)).to(device)
     zs_tensor = surfacemap(grid_tensor)
