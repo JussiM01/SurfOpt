@@ -20,14 +20,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-f', '--conf_file', type=str, default='default.json')
-    parser.add_argument('-no', '--num_opt_steps', type=int, default=10)
-    parser.add_argument('-l', '--learning_rate', type=float, default=0.001)
+    parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
+    parser.add_argument('-l', '--learning_rate', type=float, default=1)
     parser.add_argument('-pc', '--plot_changes', action='store_true')
     parser.add_argument('-pb', '--plot_best', action='store_true')
     parser.add_argument('-pr', '--plot_results', action='store_true')
     parser.add_argument('-s', '--save_plots', action='store_true')
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
-    parser.add_argument('-b', '--bound', type=int, default=100) # CHANGE this ?
+    parser.add_argument('-b', '--bound', type=float, default=2.5) # CHANGE this ?
     parser.add_argument('-ua', '--use_arcs', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
@@ -44,10 +44,10 @@ if __name__ == '__main__':
     parser.add_argument('-x1', '--end_x', type=float, default=1.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
     parser.add_argument('-prb', '--print_best', action='store_true')
-    parser.add_argument('-xmi', '--x_min', type=float, default=100.0)
-    parser.add_argument('-xma', '--x_max', type=float, default=100.0)
-    parser.add_argument('-ymi', '--y_min', type=float, default=100.0)
-    parser.add_argument('-yma', '--y_max', type=float, default=100.0)
+    parser.add_argument('-xmi', '--x_min', type=float, default=-2.5)
+    parser.add_argument('-xma', '--x_max', type=float, default=2.5)
+    parser.add_argument('-ymi', '--y_min', type=float, default=-2.5)
+    parser.add_argument('-yma', '--y_max', type=float, default=2.5)
     parser.add_argument('-xs', '--x_size', type=int, default=50)
     parser.add_argument('-ys', '--y_size', type=int, default=50)
 
