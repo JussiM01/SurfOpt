@@ -79,12 +79,11 @@ class Optimizer:
 
         self._copy_trajs()
         inside_hs = self._surfacemap(self._inside_trajs)
-        loss = torch.zeros_like(inside_hs[:,0,:])
-        loss += torch.sum((self._start_hs - inside_hs[:,0,:])**2, dim=1)
-        loss += torch.sum((inside_hs[:,-1,:] - self._end_hs)**2, dim=1)
+        loss = torch.zeros_like(inside_hs[:,0])
+        loss += (self._start_hs - inside_hs[:,0])**2
+        loss += (inside_hs[:,-1] - self._end_hs)**2
         for i in range(inside_hs.shape[1] - 1):
-            loss += torch.sum(
-                (inside_hs[:,i,:] - inside_hs[:,i+1,:])**2, dim=1)
+            loss += (inside_hs[:,i] - inside_hs[:,i+1])**2
 
         self._optimizer.zero_grad()
         mean_loss = torch.mean(loss)
