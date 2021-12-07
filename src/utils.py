@@ -15,6 +15,15 @@ def load_config(filename):
     return config
 
 
+def unpack(string, mode):
+
+    if mode == 'int':
+        return [int(char) for char in string.split(',')]
+
+    elif mode == 'float':
+        return [float(char) for char in string.split(',')]
+
+
 def create_grid(params, surfacemap):
 
     x = np.linspace(params['x_min'], params['x_max'], params['x_size'])
