@@ -46,7 +46,7 @@ def create_plot(params):
     ax.set_ylim(-params['bound'], params['bound'])
     ax.grid(True)
 
-    return fix, ax
+    return fig, ax
 
 
 def sample_sine_sums(params):
