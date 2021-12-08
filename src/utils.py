@@ -42,8 +42,11 @@ def create_plot(params):
 
     fig = plt.figure(figsize=(7, 7))
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8], frameon=True)
-    ax.set_xlim(-params['bound'], params['bound'])
-    ax.set_ylim(-params['bound'], params['bound'])
+    
+    if params['bound'] is not None:
+        ax.set_xlim(-params['bound'], params['bound'])
+        ax.set_ylim(-params['bound'], params['bound'])
+
     ax.grid(True)
 
     return fig, ax
