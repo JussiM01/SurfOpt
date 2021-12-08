@@ -116,11 +116,12 @@ class Optimizer:
             X, Y, Z = self._grid
             ax.contour(X, Y, Z, colors='lightgray')
             for j in range(self.num_opt_steps):
-                label = 'opt. step {}'.format(j)
+                label = 'Opt. step {}'.format(j+1)
                 xs = self._trajs_copies[j][i,:,0]
                 ys = self._trajs_copies[j][i,:,1]
                 ax.plot(xs, ys, color=colormap.colors[j], label=label)
-            ax.set_title('Optimization steps of the trajectory {}'.format(i))
+            ax.set_title('Optimization steps of the trajectory {}'.format(i+1))
+            ax.legend()
             plt.show()
 
     def _create_best_traj_plot(self):
@@ -138,18 +139,21 @@ class Optimizer:
 
     def _create_results_plot(self):
 
-        fig, ax = create_plot(self.fig_params['plot']) # CHANGE (limits differ)
+        params = deepcopy(self.fig_params)
+        params['bound'] = None
+        fig, ax = create_plot(params)
         colormap = cm.get_cmap('viridis', self.num_opt_steps)
         xs = [j for j in range(self.num_opt_steps)]
         for i in range(self._num_trajs):
-            label = 'trajectory {} losses'.format(i)
+            label = 'Trajectory {} losses'.format(i+1)
             ys = [self._loss_copies['losses'][j][i]
                   for j in range(self.num_opt_steps)]
             ax.plot(xs, ys, color=colormap.colors[i], label=label)
         ys = [self._loss_copies['mean_losses'][j]
               for j in range(self.num_opt_steps)]
-        ax.plot(xs, ys, color='k', label='mean losses')
+        ax.plot(xs, ys, color='r', label='Mean losses')
         ax.set_xlabel('Optimization step')
         ax.set_ylabel('Loss')
         ax.set_title('Losses')
+        ax.legend()
         plt.show()
