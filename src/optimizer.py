@@ -56,6 +56,8 @@ class Optimizer:
             trajectories[:,1:-1,:]).to(device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
         self._optimizer = self._set_optimizer(self._inside_trajs)
+        self._start_xys = torch.from_numpy(trajectories[:,0,:]).to(device)
+        self._end_xys = torch.from_numpy(trajectories[:,-1,:]).to(device)
         self._start_hs = self._surfacemap(
             torch.from_numpy(trajectories[:,0,:]).to(device))
         self._end_hs = self._surfacemap(
@@ -81,9 +83,15 @@ class Optimizer:
         self._copy_trajs()
         inside_hs = self._surfacemap(self._inside_trajs)
         loss = torch.zeros_like(inside_hs[:,0])
+        loss += torch.sum(
+            (self._start_xys - self._inside_trajs[:,0,:])**2, dim=1)
+        loss += torch.sum(
+            (self._inside_trajs[:,-1,:] - self._end_xys)**2, dim=1)
         loss += (self._start_hs - inside_hs[:,0])**2
         loss += (inside_hs[:,-1] - self._end_hs)**2
         for i in range(inside_hs.shape[1] - 1):
+            loss += torch.sum((self._inside_trajs[:,i,:]
+                              - self._inside_trajs[:,i+1,:])**2, dim=1)
             loss += (inside_hs[:,i] - inside_hs[:,i+1])**2
 
         self._optimizer.zero_grad()
