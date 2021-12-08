@@ -28,6 +28,7 @@ class Optimizer:
 
         for i in range(self.num_opt_steps):
             self._optim_step()
+            print('optimization step {} of {}'.format(i+1, self.num_opt_steps))
 
         if self.plot_changes:
             self._create_changes_plots()
@@ -137,12 +138,12 @@ class Optimizer:
 
     def _create_results_plot(self):
 
-        fig, ax = create_plot(self.fig_params['plot'])
-        colormap = cm.get_cmap('winter', self.num_opt_steps)
+        fig, ax = create_plot(self.fig_params['plot']) # CHANGE (limits differ)
+        colormap = cm.get_cmap('viridis', self.num_opt_steps)
         xs = [j for j in range(self.num_opt_steps)]
         for i in range(self._num_trajs):
             label = 'trajectory {} losses'.format(i)
-            ys = [self._loss_copies['losses'][i][j]
+            ys = [self._loss_copies['losses'][j][i]
                   for j in range(self.num_opt_steps)]
             ax.plot(xs, ys, color=colormap.colors[i], label=label)
         ys = [self._loss_copies['mean_losses'][j]
