@@ -1,15 +1,55 @@
+import json
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import torch
 
 
-def create_countours(params):
+def load_config(filename):
 
-    raise NotImplementedError
+    config_file = os.path.join('SurfaceTrajOpt/config_files',  filename)
+    print(config_file)
+    with open(config_file, 'r') as conf_file:
+        config = json.load(conf_file)
+
+    return config
+
+
+def unpack(string, mode):
+
+    if mode == 'int':
+        return [int(char) for char in string.split(',')]
+
+    elif mode == 'float':
+        return [float(char) for char in string.split(',')]
+
+
+def create_grid(params, surfacemap):
+
+    x = np.linspace(params['x_min'], params['x_max'], params['x_size'])
+    y = np.linspace(params['y_min'], params['y_max'], params['y_size'])
+
+    X, Y = np.meshgrid(x.astype('float32'), y.astype('float32'))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    grid_tensor = torch.from_numpy(np.stack([X, Y], axis=2)).to(device)
+    zs_tensor = surfacemap(grid_tensor)
+    Z = zs_tensor.cpu().numpy()
+
+    return X, Y, Z
 
 
 def create_plot(params):
 
-    raise NotImplementedError
+    fig = plt.figure(figsize=(7, 7))
+    ax = fig.add_axes([0.1, 0.1, 0.8, 0.8], frameon=True)
+    
+    if params['bound'] is not None:
+        ax.set_xlim(-params['bound'], params['bound'])
+        ax.set_ylim(-params['bound'], params['bound'])
+
+    ax.grid(True)
+
+    return fig, ax
 
 
 def sample_sine_sums(params):
@@ -25,18 +65,40 @@ def sample_sine_sums(params):
         all_sum_params.append(zip(constants, params['multiples']))
     sine_sums = np.stack([create_sine_sum(sum_params, start, end, num_steps)
                       for sum_params in all_sum_params], axis=0)
+    sine_sums = original_order(sine_sums, start, end)
 
     return sine_sums
 
 
 def create_sine_sum(sum_params, start, end, num_steps):
-    sines = np.stack([create_sine(const, multiple, start, end, num_steps)
+
+    sines = np.stack([create_sine(
+                      const, multiple, [0., -1.], [0., 1.], num_steps)
                       for const, multiple in sum_params], axis=0)
     x_values = np.expand_dims(sines[0, :, 1], axis=1)
     y_values = np.expand_dims(np.sum(sines[:, :, 0], axis=0), axis=1)
     sine_sum = np.concatenate([y_values, x_values], axis=1)
+    sine_sum = fix_orientation(sine_sum, start, end)
 
     return sine_sum
+
+
+def fix_orientation(sine_sum, start, end):
+
+    fixed_sum = np.apply_along_axis(
+        lambda point: fix_point(point, start, end), 1, sine_sum)
+
+    return fixed_sum
+
+
+def fix_point(point, start, end):
+
+    x_value, y_value = point[0], point[1]
+    scale = np.linalg.norm(np.array(end) -np.array(start))
+    start, end = reorder(start, end)
+    vector = create_vec(x_value, y_value, scale, 1.0, start, end)
+
+    return vector
 
 
 def sample_sines(params):
@@ -47,6 +109,7 @@ def sample_sines(params):
     zipped = zip(params['constants'], params['multiples'])
     sines = np.stack([create_sine(const, multiple, start, end, num_steps)
                       for const, multiple in zipped], axis=0)
+    sines = original_order(sines, start, end)
 
     return sines
 
@@ -82,9 +145,13 @@ def sample_arcs(params):
     angle_diff = (max_angle - min_angle)/num_angles
     angles = [min_angle + i*angle_diff for i in range(num_angles + 1)]
     num_steps = params['num_steps']
-    angles_signs = [(angle, sign) for angle in angles for sign in [-1.0, 1.0]]
-    arcs = np.stack([create_arc(angle, num_steps, start, end, sign)
-                     for angle, sign in angles_signs], axis=0)
+    pos_arcs = np.stack([create_arc(angle, num_steps, start, end, 1.0)
+                     for angle in angles], axis=0)
+    pos_arcs = original_order(pos_arcs, start, end)
+    neg_arcs = np.stack([create_arc(angle, num_steps, start, end, -1.0)
+                     for angle in angles], axis=0)
+    neg_arcs = original_order(neg_arcs, end, start)
+    arcs = np.concatenate([pos_arcs, neg_arcs], axis=0)
 
     return arcs
 
@@ -121,6 +188,17 @@ def reorder(start, end):
         return end, start
 
     return start, end
+
+
+def original_order(trajectories, start, end):
+
+    if (end[0] == start[0]) and (end[1] < start[1]):
+        return np.flip(trajectories, axis=1)
+
+    elif end[0] < start[0]:
+        return np.flip(trajectories, axis=1)
+
+    return trajectories
 
 
 def create_vec(x_value, y_value, scale, sign, start, end):

@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import sample_arcs, sample_sines, sample_sine_sums
+from src.utils import sample_arcs, sample_sines, sample_sine_sums
 
 
 class Sampler:
@@ -19,6 +19,8 @@ class Sampler:
                 sub_params['end'] = self.params['end']
                 trajectories = self._sample(mode, sub_params)
                 self._collect(trajectories)
+
+        self._fix_end_values()
 
         return self.trajectories
 
@@ -41,11 +43,19 @@ class Sampler:
     def _collect(self, trajectories):
 
         if self.trajectories is None:
-            self.trajectories = trajectories
+            self.trajectories = trajectories.astype('float32')
 
         else:
             self.trajectories = np.concatenate(
-                (self.trajectories, trajectories), axis=0)
+                (self.trajectories, trajectories.astype('float32')), axis=0)
+
+    def _fix_end_values(self):
+
+        self.trajectories[:,0,:] = np.array(
+            self.params['start'], dtype='float32')
+        self.trajectories[:,-1,:] = np.array(
+            self.params['end'], dtype='float32')
+
 
 
 if __name__ == '__main__':
@@ -54,12 +64,14 @@ if __name__ == '__main__':
 
     import matplotlib.pyplot as plt
 
+    from src.utils import unpack
+
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-ua', '--use_arcs', type=bool, default=False)
-    parser.add_argument('-us', '--use_sines', type=bool, default=False)
-    parser.add_argument('-uss', '--use_sine_sums', type=bool, default=True)
+    parser.add_argument('-ua', '--use_arcs', action='store_true')
+    parser.add_argument('-us', '--use_sines', action='store_true')
+    parser.add_argument('-uss', '--use_sine_sums', action='store_true')
     parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
     parser.add_argument('-m', '--multiples', type=str, default='0,1,-1')
     parser.add_argument('-u', '--up_ranges', type=str, default='1.0,1.0,1.0')
@@ -74,15 +86,6 @@ if __name__ == '__main__':
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
 
     args = parser.parse_args()
-
-
-    def unpack(string, mode):
-
-        if mode == 'int':
-            return [int(char) for char in string.split(',')]
-
-        elif mode == 'float':
-            return [float(char) for char in string.split(',')]
 
 
     params = {
@@ -116,9 +119,6 @@ if __name__ == '__main__':
             'num_steps': args.num_steps
         }
 
-
-    else:
-         raise NotImplementedError
 
     sampler = Sampler(params)
     trajectories = sampler()

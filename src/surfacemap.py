@@ -49,9 +49,9 @@ class Gaussian2D(nn.Module):
         super(Gaussian2D, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available()
             else "cpu")
-        self.mean = torch.Tensor(params['mean'])
-        self.cov_matrix = torch.Tensor(params['cov'])
-        self.const = torch.Tensor([params['const']])
+        self.mean = torch.Tensor(params['mean']).to(self.device)
+        self.cov_matrix = torch.Tensor(params['cov']).to(self.device)
+        self.const = torch.Tensor([params['const']]).to(self.device)
 
     def forward(self, point):
 
@@ -116,8 +116,20 @@ class SurfaceMap(nn.Module):
 
     def forward(self, plane_points):
 
-        zetas = torch.zeros_like(plane_points[:, 0])
-        for func in self.functions:
-            zetas += func(plane_points)
+        shape = plane_points.shape
+
+        if len(shape) == 2:
+            zetas = torch.zeros_like(plane_points[:, 0])
+            for func in self.functions:
+                zetas += func(plane_points)
+
+        elif len(shape) == 3:
+            all_zetas = []
+            for i in range(shape[0]):
+                zeta_seq = torch.zeros_like(plane_points[0, :, 0])
+                for func in self.functions:
+                    zeta_seq += func(plane_points[i, :, :])
+                all_zetas.append(zeta_seq)
+            zetas = torch.stack(all_zetas, axis=0)
 
         return zetas
