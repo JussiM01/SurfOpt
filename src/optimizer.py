@@ -117,7 +117,7 @@ class Optimizer:
 
     def _create_changes_plots(self):
 
-        colormap = cm.get_cmap('inferno', self.num_opt_steps)
+        colormap = cm.get_cmap('inferno_r', self.num_opt_steps)
         for i in range(self._num_trajs):
             fig, ax = create_plot(self.fig_params['plot'])
             plt.rcParams['contour.negative_linestyle'] = 'solid'
