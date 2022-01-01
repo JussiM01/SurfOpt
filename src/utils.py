@@ -53,7 +53,7 @@ def create_plot(params):
         ax.set_xlim(-params['bound']['x'], params['bound']['x'])
         ax.set_ylim(-params['bound']['y'], params['bound']['y'])
 
-    ax.grid(True)
+    ax.grid(False)
 
     return fig, ax
 
