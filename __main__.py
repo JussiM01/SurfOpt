@@ -27,7 +27,8 @@ if __name__ == '__main__':
     parser.add_argument('-pr', '--plot_results', action='store_true')
     parser.add_argument('-s', '--save_plots', action='store_true')
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
-    parser.add_argument('-b', '--bound', type=float, default=2.5) # CHANGE this ?
+    parser.add_argument('-bx', '--bound_x', type=float, default=5.0) # CHANGE this ?
+    parser.add_argument('-by', '--bound_y', type=float, default=2.5) # CHANGE this ?
     parser.add_argument('-ua', '--use_arcs', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
@@ -75,7 +76,10 @@ if __name__ == '__main__':
                 'y_size': args.y_size
                 },
             'plot': {
-                'bound': args.bound
+                'bound': {
+                    'x': args.bound_x,
+                    'y': args.bound_y
+                    }
                 }
             }
         }

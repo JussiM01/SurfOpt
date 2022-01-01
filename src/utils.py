@@ -46,12 +46,12 @@ def create_grid(params, surfacemap):
 
 def create_plot(params):
 
-    fig = plt.figure(figsize=(7, 7))
+    fig = plt.figure(figsize=(10, 5))
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8], frameon=True)
 
     if params['bound'] is not None:
-        ax.set_xlim(-params['bound'], params['bound'])
-        ax.set_ylim(-params['bound'], params['bound'])
+        ax.set_xlim(-params['bound']['x'], params['bound']['x'])
+        ax.set_ylim(-params['bound']['y'], params['bound']['y'])
 
     ax.grid(True)
 
