@@ -33,11 +33,11 @@ class Optimizer:
         if self.plot_changes:
             self._create_changes_plots()
 
-        if self.plot_best_traj:
-            self._create_best_traj_plot()
-
         if self.plot_results:
             self._create_results_plot()
+
+        if self.plot_best_traj:
+            self._create_best_traj_plot()
 
         best_index = self._best_indices[-1]
         optimized_trajectory = self._trajs_copies[-1][best_index,:,:]
