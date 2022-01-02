@@ -148,20 +148,18 @@ class Optimizer:
         params = deepcopy(self.fig_params)
         params['bound'] = None
         fig, ax = create_plot(params)
-        # colormap = cm.get_cmap('viridis', self.num_opt_steps)
         xs = [j for j in range(self.num_opt_steps)]
         for i in range(self._num_trajs):
             label = 'Trajectory {} loss'.format(i+1)
             ys = [self._loss_copies['losses'][j][i]
                   for j in range(self.num_opt_steps)]
-            # ax.plot(xs, ys, color=colormap.colors[i], label=label)
             ax.plot(xs, ys, label=label)
         ys = [self._loss_copies['mean_losses'][j]
               for j in range(self.num_opt_steps)]
-        # ax.plot(xs, ys, color='r', label='Mean losses')
         ax.plot(xs, ys, color='k', linestyle='--', label='Mean loss')
         ax.set_xlabel('Optimization step')
         ax.set_ylabel('Loss')
         ax.set_title('Losses of the trajectories and their mean loss')
-        ax.legend()
+        if self._num_trajs <= 10:
+            ax.legend()
         plt.show()
