@@ -19,7 +19,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-f', '--conf_file', type=str, default='default.json')
+    parser.add_argument('-f', '--conf_file', type=str,
+        default='gauss2hills.json')
     parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
     parser.add_argument('-l', '--learning_rate', type=float, default=0.0001)
     parser.add_argument('-pc', '--plot_changes', action='store_true')
