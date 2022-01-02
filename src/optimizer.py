@@ -124,12 +124,10 @@ class Optimizer:
             X, Y, Z = self._grid
             ax.contour(X, Y, Z, colors='lightgray')
             for j in range(self.num_opt_steps):
-                label = 'Opt. step {}'.format(j+1)
                 xs = self._trajs_copies[j][i,:,0]
                 ys = self._trajs_copies[j][i,:,1]
-                ax.plot(xs, ys, color=colormap.colors[j], label=label)
-            ax.set_title('Optimization steps of the trajectory {}'.format(i+1))
-            ax.legend()
+                ax.plot(xs, ys, color=colormap.colors[j])
+            ax.set_title('Optimization of the trajectory {}'.format(i+1))
             plt.show()
 
     def _create_best_traj_plot(self):
