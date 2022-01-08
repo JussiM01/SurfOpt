@@ -4,15 +4,21 @@ import os
 
 from src.optimizer import Optimizer
 from src.utils import load_config, unpack
+from src.viewsurface import view
 
 
 def main(params):
 
-    optimizer = Optimizer(params['optimizer'])
-    optimized_trajectory = optimizer(params['surface'], params['trajectories'])
+    if params['view_surface']:
+        view(params)
 
-    if params['print_best'] == True:
-        print(optimized_trajectory)
+    else:
+        optimizer = Optimizer(params['optimizer'])
+        optimized_trajectory = optimizer(
+            params['surface'], params['trajectories'])
+
+        if params['print_best'] == True:
+            print(optimized_trajectory)
 
 
 if __name__ == '__main__':
@@ -21,6 +27,8 @@ if __name__ == '__main__':
 
     parser.add_argument('-f', '--conf_file', type=str,
         default='gauss2hills.json')
+    parser.add_argument('-v', '--view_surface', action='store_true')
+    parser.add_argument('-cm', '--cmap', type=str, default='viridis')
     parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
     parser.add_argument('-l', '--learning_rate', type=float, default=0.0001)
     parser.add_argument('-pc', '--plot_changes', action='store_true')
@@ -116,11 +124,28 @@ if __name__ == '__main__':
             'num_steps': args.num_steps
         }
 
-    params = {
-        'optimizer': optimizer_params,
-        'surface': surface_params,
-        'trajectories': trajectory_params,
-        'print_best': args.print_best
-        }
+    if args.view_surface:
+        params = {
+            'conf_file': args.conf_file,
+            'view_surface': args.view_surface,
+            'grid': {
+                'x_min': args.x_min,
+                'x_max': args.x_max,
+                'y_min': args.y_min,
+                'y_max': args.y_max,
+                'x_size': args.x_size,
+                'y_size': args.y_size
+                },
+            'cmap': args.cmap
+            }
+
+    else:
+        params = {
+            'optimizer': optimizer_params,
+            'surface': surface_params,
+            'trajectories': trajectory_params,
+            'print_best': args.print_best,
+            'view_surface': False
+            }
 
     main(params)
