@@ -3,6 +3,7 @@ import numpy as np
 import os
 
 from src.optimizer import Optimizer
+from src.randomsurface import create
 from src.utils import load_config, unpack
 from src.viewsurface import view
 
@@ -11,6 +12,9 @@ def main(params):
 
     if params['view_surface']:
         view(params)
+
+    elif params['create_surface']:
+        create(params)
 
     else:
         optimizer = Optimizer(params['optimizer'])
@@ -28,6 +32,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--conf_file', type=str,
         default='gauss2hills.json')
     parser.add_argument('-v', '--view_surface', action='store_true')
+    parser.add_argument('-cs', '--create_surface', action='store_true')
     parser.add_argument('-cm', '--cmap', type=str, default='viridis')
     parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
     parser.add_argument('-l', '--learning_rate', type=float, default=0.0001)
@@ -60,10 +65,19 @@ if __name__ == '__main__':
     parser.add_argument('-yma', '--y_max', type=float, default=2.5)
     parser.add_argument('-xs', '--x_size', type=int, default=50)
     parser.add_argument('-ys', '--y_size', type=int, default=50)
-
+    parser.add_argument('-r', '--random_seed', type=int)
+    parser.add_argument('-ng', '--num_gauss', type=int, default=10)
+    parser.add_argument('-d0', '--diag_min', type=float, default=5.0)
+    parser.add_argument('-d1', '--diag_max', type=float, default=10.0)
+    parser.add_argument('-o0', '--offd_min', type=float, default=-5.0)
+    parser.add_argument('-o1', '--offd_max', type=float, default=5.0)
+    parser.add_argument('-sc', '--scale', type=float, default=1e3)
 
 
     args = parser.parse_args()
+
+    # set random seed
+    np.random.seed(args.random_seed)
 
     surface_params = load_config(args.conf_file)
 
@@ -126,8 +140,9 @@ if __name__ == '__main__':
 
     if args.view_surface:
         params = {
+            'view_surface': True,
+            'create_surface': False,
             'conf_file': args.conf_file,
-            'view_surface': args.view_surface,
             'grid': {
                 'x_min': args.x_min,
                 'x_max': args.x_max,
@@ -139,13 +154,31 @@ if __name__ == '__main__':
             'cmap': args.cmap
             }
 
+    elif args.create_surface:
+        params = {
+            'view_surface': False,
+            'create_surface': True,
+            'random_seed': args.random_seed,
+            'num_gauss': args.num_gauss,
+            'x_min': args.x_min,
+            'x_max': args.x_max,
+            'y_min': args.y_min,
+            'y_max': args.y_max,
+            'diag_min': args.diag_min,
+            'diag_max': args.diag_max,
+            'offd_min': args.offd_min,
+            'offd_max': args.offd_max,
+            'scale': args.scale
+            }
+
     else:
         params = {
+            'view_surface': False,
+            'create_surface': False,
             'optimizer': optimizer_params,
             'surface': surface_params,
             'trajectories': trajectory_params,
-            'print_best': args.print_best,
-            'view_surface': False
+            'print_best': args.print_best
             }
 
     main(params)
