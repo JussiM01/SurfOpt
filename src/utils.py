@@ -5,10 +5,16 @@ import os
 import torch
 
 
+def write_config(data, filename):
+
+    config_file = os.path.join('SurfaceTrajOpt/config_files',  filename)
+    with open(config_file, 'w') as f:
+        json.dump(data, f, indent=4, sort_keys=True)
+
+
 def load_config(filename):
 
     config_file = os.path.join('SurfaceTrajOpt/config_files',  filename)
-    print(config_file)
     with open(config_file, 'r') as conf_file:
         config = json.load(conf_file)
 
@@ -40,14 +46,14 @@ def create_grid(params, surfacemap):
 
 def create_plot(params):
 
-    fig = plt.figure(figsize=(7, 7))
+    fig = plt.figure(figsize=(10, 5))
     ax = fig.add_axes([0.1, 0.1, 0.8, 0.8], frameon=True)
-    
-    if params['bound'] is not None:
-        ax.set_xlim(-params['bound'], params['bound'])
-        ax.set_ylim(-params['bound'], params['bound'])
 
-    ax.grid(True)
+    if params['bound'] is not None:
+        ax.set_xlim(-params['bound']['x'], params['bound']['x'])
+        ax.set_ylim(-params['bound']['y'], params['bound']['y'])
+
+    ax.grid(False)
 
     return fig, ax
 

@@ -3,31 +3,46 @@ import numpy as np
 import os
 
 from src.optimizer import Optimizer
+from src.randomsurface import create
 from src.utils import load_config, unpack
+from src.viewsurface import view
 
 
 def main(params):
 
-    optimizer = Optimizer(params['optimizer'])
-    optimized_trajectory = optimizer(params['surface'], params['trajectories'])
+    if params['view_surface']:
+        view(params)
 
-    if params['print_best'] == True:
-        print(optimized_trajectory)
+    elif params['create_surface']:
+        create(params)
+
+    else:
+        optimizer = Optimizer(params['optimizer'])
+        optimized_trajectory = optimizer(
+            params['surface'], params['trajectories'])
+
+        if params['print_best'] == True:
+            print(optimized_trajectory)
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-f', '--conf_file', type=str, default='default.json')
-    parser.add_argument('-no', '--num_opt_steps', type=int, default=20)
-    parser.add_argument('-l', '--learning_rate', type=float, default=0.1)
+    parser.add_argument('-f', '--conf_file', type=str,
+        default='gauss2hills.json')
+    parser.add_argument('-v', '--view_surface', action='store_true')
+    parser.add_argument('-cs', '--create_surface', action='store_true')
+    parser.add_argument('-cm', '--cmap', type=str, default='viridis')
+    parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
+    parser.add_argument('-l', '--learning_rate', type=float, default=0.0001)
     parser.add_argument('-pc', '--plot_changes', action='store_true')
     parser.add_argument('-pb', '--plot_best', action='store_true')
     parser.add_argument('-pr', '--plot_results', action='store_true')
     parser.add_argument('-s', '--save_plots', action='store_true')
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
-    parser.add_argument('-b', '--bound', type=float, default=2.5) # CHANGE this ?
+    parser.add_argument('-bx', '--bound_x', type=float, default=5.0) # CHANGE this ?
+    parser.add_argument('-by', '--bound_y', type=float, default=2.5) # CHANGE this ?
     parser.add_argument('-ua', '--use_arcs', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
@@ -39,21 +54,30 @@ if __name__ == '__main__':
     parser.add_argument('-mi', '--min_angle', type=int, default=np.pi/18)
     parser.add_argument('-ma', '--max_angle', type=int, default=np.pi/4)
     parser.add_argument('-ns', '--num_steps', type=int, default=50)
-    parser.add_argument('-x0', '--start_x', type=float, default=-1.0)
+    parser.add_argument('-x0', '--start_x', type=float, default=-2.0)
     parser.add_argument('-y0', '--start_y', type=float, default=0.0)
-    parser.add_argument('-x1', '--end_x', type=float, default=1.0)
+    parser.add_argument('-x1', '--end_x', type=float, default=2.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
     parser.add_argument('-prb', '--print_best', action='store_true')
-    parser.add_argument('-xmi', '--x_min', type=float, default=-2.5)
-    parser.add_argument('-xma', '--x_max', type=float, default=2.5)
+    parser.add_argument('-xmi', '--x_min', type=float, default=-5.0)
+    parser.add_argument('-xma', '--x_max', type=float, default=5.0)
     parser.add_argument('-ymi', '--y_min', type=float, default=-2.5)
     parser.add_argument('-yma', '--y_max', type=float, default=2.5)
     parser.add_argument('-xs', '--x_size', type=int, default=50)
     parser.add_argument('-ys', '--y_size', type=int, default=50)
-
+    parser.add_argument('-r', '--random_seed', type=int)
+    parser.add_argument('-ng', '--num_gauss', type=int, default=10)
+    parser.add_argument('-d0', '--diag_min', type=float, default=5.0)
+    parser.add_argument('-d1', '--diag_max', type=float, default=10.0)
+    parser.add_argument('-o0', '--offd_min', type=float, default=-5.0)
+    parser.add_argument('-o1', '--offd_max', type=float, default=5.0)
+    parser.add_argument('-sc', '--scale', type=float, default=1e3)
 
 
     args = parser.parse_args()
+
+    # set random seed
+    np.random.seed(args.random_seed)
 
     surface_params = load_config(args.conf_file)
 
@@ -75,7 +99,10 @@ if __name__ == '__main__':
                 'y_size': args.y_size
                 },
             'plot': {
-                'bound': args.bound
+                'bound': {
+                    'x': args.bound_x,
+                    'y': args.bound_y
+                    }
                 }
             }
         }
@@ -111,11 +138,47 @@ if __name__ == '__main__':
             'num_steps': args.num_steps
         }
 
-    params = {
-        'optimizer': optimizer_params,
-        'surface': surface_params,
-        'trajectories': trajectory_params,
-        'print_best': args.print_best
-        }
+    if args.view_surface:
+        params = {
+            'view_surface': True,
+            'create_surface': False,
+            'conf_file': args.conf_file,
+            'grid': {
+                'x_min': args.x_min,
+                'x_max': args.x_max,
+                'y_min': args.y_min,
+                'y_max': args.y_max,
+                'x_size': args.x_size,
+                'y_size': args.y_size
+                },
+            'cmap': args.cmap
+            }
+
+    elif args.create_surface:
+        params = {
+            'view_surface': False,
+            'create_surface': True,
+            'random_seed': args.random_seed,
+            'num_gauss': args.num_gauss,
+            'x_min': args.x_min,
+            'x_max': args.x_max,
+            'y_min': args.y_min,
+            'y_max': args.y_max,
+            'diag_min': args.diag_min,
+            'diag_max': args.diag_max,
+            'offd_min': args.offd_min,
+            'offd_max': args.offd_max,
+            'scale': args.scale
+            }
+
+    else:
+        params = {
+            'view_surface': False,
+            'create_surface': False,
+            'optimizer': optimizer_params,
+            'surface': surface_params,
+            'trajectories': trajectory_params,
+            'print_best': args.print_best
+            }
 
     main(params)
