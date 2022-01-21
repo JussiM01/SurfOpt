@@ -35,7 +35,8 @@ if __name__ == '__main__':
     parser.add_argument('-cs', '--create_surface', action='store_true')
     parser.add_argument('-cm', '--cmap', type=str, default='viridis')
     parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
-    parser.add_argument('-l', '--learning_rate', type=float, default=0.0001)
+    parser.add_argument('-l', '--learning_rate', type=float, default=0.01)
+    parser.add_argument('-re', '--regular_const', type=float, default=0.001)
     parser.add_argument('-pc', '--plot_changes', action='store_true')
     parser.add_argument('-pb', '--plot_best', action='store_true')
     parser.add_argument('-pr', '--plot_results', action='store_true')
@@ -84,6 +85,7 @@ if __name__ == '__main__':
     optimizer_params = {
         'num_opt_steps': args.num_opt_steps,
         'learning_rate': args.learning_rate,
+        'regular_const': args.regular_const,
         'plot_changes': args.plot_changes,
         'plot_best': args.plot_best,
         'plot_results': args.plot_results,
