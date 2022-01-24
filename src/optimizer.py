@@ -15,6 +15,7 @@ class Optimizer:
 
         self.num_opt_steps = params['num_opt_steps']
         self.learning_rate = params['learning_rate']
+        self.regular_const = params['regular_const']
         self.plot_changes = params['plot_changes']
         self.plot_best_traj = params['plot_best']
         self.plot_results = params['plot_results']
@@ -48,20 +49,31 @@ class Optimizer:
 
         sampler = Sampler(trajectory_params)
         trajectories = sampler()
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self._device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self._num_trajs = trajectories.shape[0]
+        self._num_steps = trajectories.shape[1]
         self._starts = trajectories[:,0:1,:]
         self._ends = trajectories[:,-1:,:]
         self._inside_trajs = torch.from_numpy(
-            trajectories[:,1:-1,:]).to(device).requires_grad_(True)
+            trajectories[:,1:-1,:]).to(self._device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
         self._optimizer = self._set_optimizer(self._inside_trajs)
-        self._start_xys = torch.from_numpy(trajectories[:,0,:]).to(device)
-        self._end_xys = torch.from_numpy(trajectories[:,-1,:]).to(device)
+        self._start_xys = torch.from_numpy(trajectories[:,0,:]).to(
+            self._device)
+        self._end_xys = torch.from_numpy(trajectories[:,-1,:]).to(self._device)
         self._start_hs = self._surfacemap(
-            torch.from_numpy(trajectories[:,0,:]).to(device))
+            torch.from_numpy(trajectories[:,0,:]).to(self._device))
         self._end_hs = self._surfacemap(
-            torch.from_numpy(trajectories[:,-1,:]).to(device))
+            torch.from_numpy(trajectories[:,-1,:]).to(self._device))
+        start_xys = torch.from_numpy(trajectories[:,0:1,:]).to(self._device)
+        end_xys = torch.from_numpy(trajectories[:,-1:,:]).to(self._device)
+        start_hs = torch.unsqueeze(self._surfacemap(
+            torch.from_numpy(trajectories[:,0:1,:]).to(self._device)), dim=2)
+        end_hs = torch.unsqueeze(self._surfacemap(
+            torch.from_numpy(trajectories[:,-1:,:]).to(self._device)), dim=2)
+        self._start_points = torch.cat([start_xys, start_hs], dim=2)
+        self._end_points = torch.cat([end_xys, end_hs], dim=2)
         self._grid = create_grid(self.fig_params['grid'], self._surfacemap)
         self._loss_copies = {'losses': [], 'mean_losses': []}
         self._best_indices = []
@@ -81,18 +93,18 @@ class Optimizer:
     def _optim_step(self):
 
         self._copy_trajs()
-        inside_hs = self._surfacemap(self._inside_trajs)
-        loss = torch.zeros_like(inside_hs[:,0])
-        loss += torch.sum(
-            (self._start_xys - self._inside_trajs[:,0,:])**2, dim=1)
-        loss += torch.sum(
-            (self._inside_trajs[:,-1,:] - self._end_xys)**2, dim=1)
-        loss += (self._start_hs - inside_hs[:,0])**2
-        loss += (inside_hs[:,-1] - self._end_hs)**2
-        for i in range(inside_hs.shape[1] - 1):
-            loss += torch.sum((self._inside_trajs[:,i,:]
-                              - self._inside_trajs[:,i+1,:])**2, dim=1)
-            loss += (inside_hs[:,i] - inside_hs[:,i+1])**2
+        in_hs = torch.unsqueeze(self._surfacemap(self._inside_trajs), dim=2)
+        in_points = torch.cat([self._inside_trajs, in_hs], dim=2)
+        no_ends = torch.cat([self._start_points, in_points], dim=1)
+        no_starts =  torch.cat([in_points, self._end_points], dim=1)
+
+        loss = torch.zeros(self._num_trajs).to(self._device)
+        ds_squares = torch.sum((no_ends -no_starts)**2, dim=2)
+        meand_ds2 = torch.mean(ds_squares, dim=1)
+        loss += meand_ds2
+        meand_ds2 = torch.stack((self._num_steps -1)*[meand_ds2], dim=1)
+        reg_loss = torch.mean((meand_ds2 - ds_squares)**2, dim=1)
+        loss += self.regular_const * reg_loss
 
         self._optimizer.zero_grad()
         mean_loss = torch.mean(loss)
