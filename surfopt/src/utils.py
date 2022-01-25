@@ -7,14 +7,14 @@ import torch
 
 def write_config(data, filename):
 
-    config_file = os.path.join('SurfaceTrajOpt/config_files',  filename)
+    config_file = os.path.join('surfopt/config_files',  filename)
     with open(config_file, 'w') as f:
         json.dump(data, f, indent=4, sort_keys=True)
 
 
 def load_config(filename):
 
-    config_file = os.path.join('SurfaceTrajOpt/config_files',  filename)
+    config_file = os.path.join('surfopt/config_files',  filename)
     with open(config_file, 'r') as conf_file:
         config = json.load(conf_file)
 
