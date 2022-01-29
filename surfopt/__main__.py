@@ -45,11 +45,12 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
     parser.add_argument('-bx', '--bound_x', type=float, default=5.0) # CHANGE this ?
     parser.add_argument('-by', '--bound_y', type=float, default=2.5) # CHANGE this ?
+    parser.add_argument('-ul', '--use_line', default=True)
     parser.add_argument('-ua', '--use_arcs', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
     parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
-    parser.add_argument('-m', '--multiples', type=str, default='0,1,-1')
+    parser.add_argument('-m', '--multiples', type=str, default='1,-1')
     parser.add_argument('-u', '--up_ranges', type=str, default='1.0,1.0,1.0')
     parser.add_argument('-nsa', '--num_samples', type=int, default=10)
     parser.add_argument('-na', '--num_angles', type=int, default=4)
@@ -122,6 +123,12 @@ if __name__ == '__main__':
             'num_angles': args.num_angles,
             'min_angle': args.min_angle,
             'max_angle': args.max_angle,
+            'num_steps': args.num_steps
+        }
+
+    if args.use_line is True:
+
+        trajectory_params['line'] = {
             'num_steps': args.num_steps
         }
 
