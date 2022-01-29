@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
     parser.add_argument('-bx', '--bound_x', type=float, default=5.0) # CHANGE this ?
     parser.add_argument('-by', '--bound_y', type=float, default=2.5) # CHANGE this ?
-    parser.add_argument('-ul', '--use_line', default=True)
+    parser.add_argument('-ul', '--use_line', type=bool, default=True)
     parser.add_argument('-ua', '--use_arcs', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
