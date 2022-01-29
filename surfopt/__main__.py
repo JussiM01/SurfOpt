@@ -22,7 +22,7 @@ def main(params):
             params['surface'], params['trajectories'])
 
         if params['print_best'] == True:
-            print('\nOPTIMZED TRAJECTORY:\n\n{}\n'.format(
+            print('\nOPTIMIZED TRAJECTORY:\n\n{}\n'.format(
                 optimized_trajectory))
 
 
