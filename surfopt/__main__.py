@@ -22,7 +22,8 @@ def main(params):
             params['surface'], params['trajectories'])
 
         if params['print_best'] == True:
-            print(optimized_trajectory)
+            print('\nOPTIMZED TRAJECTORY:\n\n{}\n'.format(
+                optimized_trajectory))
 
 
 if __name__ == '__main__':
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('-re', '--regular_const', type=float, default=1e-2)
     parser.add_argument('-pa', '--plot_all', action='store_true')
     parser.add_argument('-pc', '--plot_changes', action='store_true')
-    parser.add_argument('-pb', '--plot_best', action='store_true')
+    parser.add_argument('-pb', '--plot_best', type=bool, default=True)
     parser.add_argument('-pr', '--plot_results', action='store_true')
     parser.add_argument('-s', '--save_plots', action='store_true')
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument('-y0', '--start_y', type=float, default=0.0)
     parser.add_argument('-x1', '--end_x', type=float, default=2.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
-    parser.add_argument('-prb', '--print_best', action='store_true')
+    parser.add_argument('-prb', '--print_best', type=bool, default=True)
     parser.add_argument('-xmi', '--x_min', type=float, default=-5.0)
     parser.add_argument('-xma', '--x_max', type=float, default=5.0)
     parser.add_argument('-ymi', '--y_min', type=float, default=-2.5)
