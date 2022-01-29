@@ -37,6 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
     parser.add_argument('-l', '--learning_rate', type=float, default=5e-3)
     parser.add_argument('-re', '--regular_const', type=float, default=1e-2)
+    parser.add_argument('-pa', '--plot_all', action='store_true')
     parser.add_argument('-pc', '--plot_changes', action='store_true')
     parser.add_argument('-pb', '--plot_best', action='store_true')
     parser.add_argument('-pr', '--plot_results', action='store_true')
@@ -89,6 +90,7 @@ if __name__ == '__main__':
         'plot_changes': args.plot_changes,
         'plot_best': args.plot_best,
         'plot_results': args.plot_results,
+        'plot_all': args.plot_all,
         'save_plots': args.save_plots,
         'optim_type': args.optim_type,
         'fig': { # CHANGE these and/or add more k,v pairs ?
