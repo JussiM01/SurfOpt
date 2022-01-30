@@ -197,4 +197,7 @@ if __name__ == '__main__':
     if args.save_params:
         save(params, args.params_file)
 
+    elif args.params_file is not None:
+        params = load(args.params_file, 'saved_params')
+
     main(params)
