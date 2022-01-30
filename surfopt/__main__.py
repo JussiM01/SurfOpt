@@ -54,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--multiples', type=str, default='1,-1')
     parser.add_argument('-u', '--up_ranges', type=str, default='1.0,1.0,1.0')
     parser.add_argument('-nsa', '--num_samples', type=int, default=10)
-    parser.add_argument('-na', '--num_angles', type=int, default=4)
+    parser.add_argument('-na', '--num_angles', type=int, default=1)
     parser.add_argument('-mi', '--min_angle', type=int, default=np.pi/18)
     parser.add_argument('-ma', '--max_angle', type=int, default=np.pi/4)
     parser.add_argument('-ns', '--num_steps', type=int, default=50)
