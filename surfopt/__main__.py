@@ -4,7 +4,7 @@ import os
 
 from src.optimizer import Optimizer
 from src.randomsurface import create
-from src.utils import load_config, unpack
+from src.utils import load_dict, unpack
 from src.viewsurface import view
 
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # set random seed
     np.random.seed(args.random_seed)
 
-    surface_params = load_config(args.conf_file)
+    surface_params = load_dict(args.conf_file, 'config_files')
 
     optimizer_params = {
         'num_opt_steps': args.num_opt_steps,
