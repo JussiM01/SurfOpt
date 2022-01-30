@@ -1,7 +1,9 @@
 import json
+import os
+import time
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import torch
 
 
@@ -19,6 +21,18 @@ def load_dict(filename, dir):
         config = json.load(conf_file)
 
     return config
+
+
+def save(params, filename):
+
+    if filename is None:
+        time_now = time.strftime("%Y_%m_%d_%Z_%H_%M_%S")
+        filename = 'params_' + time_now + '.json'
+
+    else:
+        filename = filename + '.json'
+
+    write_dict(params, filename, 'saved_params')
 
 
 def unpack(string, mode):

@@ -4,7 +4,7 @@ import os
 
 from src.optimizer import Optimizer
 from src.randomsurface import create
-from src.utils import load_dict, unpack
+from src.utils import load_dict, unpack, save
 from src.viewsurface import view
 
 
@@ -76,7 +76,8 @@ if __name__ == '__main__':
     parser.add_argument('-o0', '--offd_min', type=float, default=-5.0)
     parser.add_argument('-o1', '--offd_max', type=float, default=5.0)
     parser.add_argument('-sc', '--scale', type=float, default=1e3)
-
+    parser.add_argument('-sp', '--save_params', action='store_true')
+    parser.add_argument('-pf', '--params_file', type=str, default=None)
 
     args = parser.parse_args()
 
@@ -192,5 +193,8 @@ if __name__ == '__main__':
             'trajectories': trajectory_params,
             'print_best': args.print_best
             }
+
+    if args.save_params:
+        save(params, args.params_file)
 
     main(params)
