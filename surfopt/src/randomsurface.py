@@ -1,7 +1,7 @@
 import numpy as np
 
 from scipy.stats import multivariate_normal
-from src.utils import write_dict
+from src.utils import write
 
 
 def create(params):
@@ -11,7 +11,7 @@ def create(params):
     filename = ('gauss' + str(params['num_gauss']) + 'seed'
         + str(params['random_seed']) +  '.json')
 
-    write_dict(data, filename, 'config_files')
+    write(data, filename, 'config_files')
 
 
 def random_gaussians(params):

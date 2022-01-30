@@ -7,14 +7,14 @@ import numpy as np
 import torch
 
 
-def write_dict(data, filename, dir):
+def write(data, filename, dir):
 
     config_file = os.path.join('surfopt', dir,  filename)
     with open(config_file, 'w') as f:
         json.dump(data, f, indent=4, sort_keys=True)
 
 
-def load_dict(filename, dir):
+def load(filename, dir):
 
     config_file = os.path.join('surfopt', dir,  filename)
     with open(config_file, 'r') as conf_file:
@@ -32,7 +32,7 @@ def save(params, filename):
     else:
         filename = filename + '.json'
 
-    write_dict(params, filename, 'saved_params')
+    write(params, filename, 'saved_params')
 
 
 def unpack(string, mode):
