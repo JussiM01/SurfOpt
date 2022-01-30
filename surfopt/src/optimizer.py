@@ -19,6 +19,7 @@ class Optimizer:
         self.plot_changes = params['plot_changes']
         self.plot_best_traj = params['plot_best']
         self.plot_results = params['plot_results']
+        self.plot_all = params['plot_all']
         self.save_plots = params['save_plots']
         self.optim_type = params['optim_type']
         self.fig_params = params['fig']
@@ -31,13 +32,13 @@ class Optimizer:
             self._optim_step()
             print('optimization step {} of {}'.format(i+1, self.num_opt_steps))
 
-        if self.plot_changes:
+        if self.plot_changes or self.plot_all:
             self._create_changes_plots()
 
-        if self.plot_results:
+        if self.plot_results or self.plot_all:
             self._create_results_plot()
 
-        if self.plot_best_traj:
+        if self.plot_best_traj or self.plot_all:
             self._create_best_traj_plot()
 
         best_index = self._best_indices[-1]

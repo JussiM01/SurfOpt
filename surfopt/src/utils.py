@@ -107,6 +107,15 @@ def fix_point(point, start, end):
     return vector
 
 
+def sample_line(params):
+
+    params['constants'] = [1.0]
+    params['multiples'] = [0]
+    line = sample_sines(params)
+    
+    return line
+
+
 def sample_sines(params):
 
     start = params['start']

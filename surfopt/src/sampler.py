@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.utils import sample_arcs, sample_sines, sample_sine_sums
+from src.utils import sample_arcs, sample_line, sample_sines, sample_sine_sums
 
 
 class Sampler:
@@ -12,7 +12,7 @@ class Sampler:
 
     def __call__(self):
 
-        for mode in {'arcs', 'sines', 'sine_sums'}:
+        for mode in {'arcs', 'line', 'sines', 'sine_sums'}:
             if mode in self.params:
                 sub_params = self.params[mode]
                 sub_params['start'] = self.params['start']
@@ -28,6 +28,9 @@ class Sampler:
 
         if mode == 'arcs':
             trajectories = sample_arcs(params)
+
+        elif mode == 'line':
+            trajectories = sample_line(params)
 
         elif mode == 'sines':
             trajectories = sample_sines(params)
@@ -70,6 +73,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-ua', '--use_arcs', action='store_true')
+    parser.add_argument('-ul', '--use_line', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
     parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
@@ -99,6 +103,12 @@ if __name__ == '__main__':
             'num_angles': args.num_angles,
             'min_angle': args.min_angle,
             'max_angle': args.max_angle,
+            'num_steps': args.num_steps
+        }
+
+    if args.use_line is True:
+
+        params['line'] = {
             'num_steps': args.num_steps
         }
 

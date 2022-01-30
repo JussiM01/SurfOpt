@@ -22,7 +22,8 @@ def main(params):
             params['surface'], params['trajectories'])
 
         if params['print_best'] == True:
-            print(optimized_trajectory)
+            print('\nOPTIMIZED TRAJECTORY:\n\n{}\n'.format(
+                optimized_trajectory))
 
 
 if __name__ == '__main__':
@@ -37,18 +38,20 @@ if __name__ == '__main__':
     parser.add_argument('-no', '--num_opt_steps', type=int, default=1000)
     parser.add_argument('-l', '--learning_rate', type=float, default=5e-3)
     parser.add_argument('-re', '--regular_const', type=float, default=1e-2)
+    parser.add_argument('-pa', '--plot_all', action='store_true')
     parser.add_argument('-pc', '--plot_changes', action='store_true')
-    parser.add_argument('-pb', '--plot_best', action='store_true')
+    parser.add_argument('-pb', '--plot_best', type=bool, default=True)
     parser.add_argument('-pr', '--plot_results', action='store_true')
     parser.add_argument('-s', '--save_plots', action='store_true')
     parser.add_argument('-o', '--optim_type', type=str, default='SGD')
     parser.add_argument('-bx', '--bound_x', type=float, default=5.0) # CHANGE this ?
     parser.add_argument('-by', '--bound_y', type=float, default=2.5) # CHANGE this ?
+    parser.add_argument('-ul', '--use_line', type=bool, default=True)
     parser.add_argument('-ua', '--use_arcs', action='store_true')
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
     parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
-    parser.add_argument('-m', '--multiples', type=str, default='0,1,-1')
+    parser.add_argument('-m', '--multiples', type=str, default='1,-1')
     parser.add_argument('-u', '--up_ranges', type=str, default='1.0,1.0,1.0')
     parser.add_argument('-nsa', '--num_samples', type=int, default=10)
     parser.add_argument('-na', '--num_angles', type=int, default=4)
@@ -59,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument('-y0', '--start_y', type=float, default=0.0)
     parser.add_argument('-x1', '--end_x', type=float, default=2.0)
     parser.add_argument('-y1', '--end_y', type=float, default=0.0)
-    parser.add_argument('-prb', '--print_best', action='store_true')
+    parser.add_argument('-prb', '--print_best', type=bool, default=True)
     parser.add_argument('-xmi', '--x_min', type=float, default=-5.0)
     parser.add_argument('-xma', '--x_max', type=float, default=5.0)
     parser.add_argument('-ymi', '--y_min', type=float, default=-2.5)
@@ -89,6 +92,7 @@ if __name__ == '__main__':
         'plot_changes': args.plot_changes,
         'plot_best': args.plot_best,
         'plot_results': args.plot_results,
+        'plot_all': args.plot_all,
         'save_plots': args.save_plots,
         'optim_type': args.optim_type,
         'fig': { # CHANGE these and/or add more k,v pairs ?
@@ -120,6 +124,12 @@ if __name__ == '__main__':
             'num_angles': args.num_angles,
             'min_angle': args.min_angle,
             'max_angle': args.max_angle,
+            'num_steps': args.num_steps
+        }
+
+    if args.use_line is True:
+
+        trajectory_params['line'] = {
             'num_steps': args.num_steps
         }
 
