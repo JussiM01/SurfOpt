@@ -23,7 +23,7 @@ def load(filename, dir):
     return config
 
 
-def save(params, filename):
+def save(params, filename): # NOTE: REMOVE & DO THIS IN __main__.py
 
     if filename is None:
         time_now = time.strftime("%Y_%m_%d_%Z_%H_%M_%S")

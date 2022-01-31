@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -21,6 +22,7 @@ class Optimizer:
         self.plot_results = params['plot_results']
         self.plot_all = params['plot_all']
         self.save_plots = params['save_plots']
+        self.saving_name = params['saving_name']
         self.optim_type = params['optim_type']
         self.fig_params = params['fig']
 
@@ -128,6 +130,18 @@ class Optimizer:
         self._loss_copies['losses'].append(loss.tolist())
         self._loss_copies['mean_losses'].append(mean_loss.item())
 
+    def _plot_or_save(self, plot_type):
+
+        if self.save_plots:
+            dir = os.path.join('surfopt', 'plots', self.saving_name)
+            if not os.path.exists(dir):
+                os.makedirs(dir)
+            filename = plot_type + '_' + '.png'
+            plt.savefig(os.path.join(dir, filename))
+
+        else:
+            plt.show()
+
     def _create_changes_plots(self):
 
         colormap = cm.get_cmap('inferno_r', self.num_opt_steps)
@@ -141,7 +155,8 @@ class Optimizer:
                 ys = self._trajs_copies[j][i,:,1]
                 ax.plot(xs, ys, color=colormap.colors[j])
             ax.set_title('Optimization of the trajectory {}'.format(i+1))
-            plt.show()
+
+            self._plot_or_save('changes_plot_traj{}'.format(i+1))
 
     def _create_best_traj_plot(self):
 
@@ -154,7 +169,8 @@ class Optimizer:
         ys = self._trajs_copies[-1][best_index,:,1]
         ax.plot(xs, ys, color='k')
         ax.set_title('Best trajectory after optimization')
-        plt.show()
+
+        self._plot_or_save('best_traj_plot')
 
     def _create_results_plot(self):
 
@@ -175,4 +191,5 @@ class Optimizer:
         ax.set_title('Losses of the trajectories and their mean loss')
         if self._num_trajs <= 10:
             ax.legend()
-        plt.show()
+
+        self._plot_or_save('results_plot')

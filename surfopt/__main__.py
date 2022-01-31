@@ -1,10 +1,11 @@
 import argparse
 import numpy as np
 import os
+import time
 
 from src.optimizer import Optimizer
 from src.randomsurface import create
-from src.utils import load, unpack, save
+from src.utils import load, unpack, write
 from src.viewsurface import view
 
 
@@ -77,6 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('-o1', '--offd_max', type=float, default=5.0)
     parser.add_argument('-sc', '--scale', type=float, default=1e3)
     parser.add_argument('-sp', '--save_params', action='store_true')
+    parser.add_argument('-sn', '--saving_name', type=str, default=None)
     parser.add_argument('-pf', '--params_file', type=str, default=None)
 
     args = parser.parse_args()
@@ -85,6 +87,12 @@ if __name__ == '__main__':
     np.random.seed(args.random_seed)
 
     surface_params = load(args.conf_file, 'config_files')
+
+    if args.saving_name is None:
+        saving_name = time.strftime("%Y_%m_%d_%Z_%H_%M_%S")
+
+    else:
+        saving_name = args.saving_name
 
     optimizer_params = {
         'num_opt_steps': args.num_opt_steps,
@@ -96,6 +104,7 @@ if __name__ == '__main__':
         'plot_all': args.plot_all,
         'save_plots': args.save_plots,
         'optim_type': args.optim_type,
+        'saving_name': saving_name,
         'fig': { # CHANGE these and/or add more k,v pairs ?
             'grid': {
                 'x_min': args.x_min,
@@ -195,9 +204,9 @@ if __name__ == '__main__':
             }
 
     if args.save_params:
-        save(params, args.params_file)
+        write(params, saving_name + '.json', 'saved_params')
 
     elif args.params_file is not None:
-        params = load(args.params_file, 'saved_params')
+        params = load(args.params_file + '.json', 'saved_params')
 
     main(params)
