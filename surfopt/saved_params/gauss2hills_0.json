@@ -25,7 +25,8 @@
         "plot_changes": false,
         "plot_results": false,
         "regular_const": 0.001,
-        "save_plots": false
+        "save_plots": false,
+        "saving_name": "gauss2hills_0"
     },
     "print_best": true,
     "surface": {
