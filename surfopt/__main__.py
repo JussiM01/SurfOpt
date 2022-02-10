@@ -32,7 +32,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-f', '--conf_file', type=str,
-        default='gauss2hills.json')
+        default='gauss2hills')
     parser.add_argument('-v', '--view_surface', action='store_true')
     parser.add_argument('-cs', '--create_surface', action='store_true')
     parser.add_argument('-cm', '--cmap', type=str, default='viridis')
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # set random seed
     np.random.seed(args.random_seed)
 
-    surface_params = load(args.conf_file, 'config_files')
+    surface_params = load(args.conf_file + '.json', 'config_files')
 
     if args.saving_name is None:
         saving_name = time.strftime("%Y_%m_%d_%Z_%H_%M_%S")
@@ -164,7 +164,7 @@ if __name__ == '__main__':
         params = {
             'view_surface': True,
             'create_surface': False,
-            'conf_file': args.conf_file,
+            'conf_file': args.conf_file + '.json',
             'grid': {
                 'x_min': args.x_min,
                 'x_max': args.x_max,
