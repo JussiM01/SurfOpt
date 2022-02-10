@@ -19,12 +19,12 @@ def main(params):
 
     else:
         optimizer = Optimizer(params['optimizer'])
-        optimized_trajectory = optimizer(
-            params['surface'], params['trajectories'])
+        optimized_path = optimizer(
+            params['surface'], params['paths'])
 
         if params['print_best'] == True:
-            print('\nOPTIMIZED TRAJECTORY:\n\n{}\n'.format(
-                optimized_trajectory))
+            print('\nOPTIMIZED PATH:\n\n{}\n'.format(
+                optimized_path))
 
 
 if __name__ == '__main__':
@@ -123,14 +123,14 @@ if __name__ == '__main__':
             }
         }
 
-    trajectory_params = {
+    path_params = {
         'start': [args.start_x, args.start_y],
         'end': [args.end_x, args.end_y]
     }
 
     if args.use_arcs is True:
 
-        trajectory_params['arcs'] = {
+        path_params['arcs'] = {
             'num_angles': args.num_angles,
             'min_angle': args.min_angle,
             'max_angle': args.max_angle,
@@ -139,13 +139,13 @@ if __name__ == '__main__':
 
     if args.use_line is True:
 
-        trajectory_params['line'] = {
+        path_params['line'] = {
             'num_steps': args.num_steps
         }
 
     if args.use_sines is True:
 
-        trajectory_params['sines'] = {
+        path_params['sines'] = {
             'constants': unpack(args.constants, 'float'),
             'multiples': unpack(args.multiples, 'int'),
             'num_steps': args.num_steps
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     if args.use_sine_sums is True:
 
-        trajectory_params['sine_sums'] = {
+        path_params['sine_sums'] = {
             'up_ranges': unpack(args.up_ranges, 'float'),
             'multiples': unpack(args.multiples, 'int'),
             'num_samples': args.num_samples,
@@ -199,7 +199,7 @@ if __name__ == '__main__':
             'create_surface': False,
             'optimizer': optimizer_params,
             'surface': surface_params,
-            'trajectories': trajectory_params,
+            'paths': path_params,
             'print_best': args.print_best
             }
 

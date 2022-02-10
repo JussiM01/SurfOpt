@@ -28,6 +28,25 @@
         "save_plots": false,
         "saving_name": "gauss2hills_0"
     },
+    "paths": {
+        "arcs": {
+            "max_angle": 0.7853981633974483,
+            "min_angle": 0.17453292519943295,
+            "num_angles": 1,
+            "num_steps": 50
+        },
+        "end": [
+            2.0,
+            0.0
+        ],
+        "line": {
+            "num_steps": 50
+        },
+        "start": [
+            -2.0,
+            0.0
+        ]
+    },
     "print_best": true,
     "surface": {
         "gauss": {
@@ -68,25 +87,6 @@
                 ]
             ]
         }
-    },
-    "trajectories": {
-        "arcs": {
-            "max_angle": 0.7853981633974483,
-            "min_angle": 0.17453292519943295,
-            "num_angles": 1,
-            "num_steps": 50
-        },
-        "end": [
-            2.0,
-            0.0
-        ],
-        "line": {
-            "num_steps": 50
-        },
-        "start": [
-            -2.0,
-            0.0
-        ]
     },
     "view_surface": false
 }

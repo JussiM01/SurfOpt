@@ -207,15 +207,15 @@ def reorder(start, end):
     return start, end
 
 
-def original_order(trajectories, start, end):
+def original_order(paths, start, end):
 
     if (end[0] == start[0]) and (end[1] < start[1]):
-        return np.flip(trajectories, axis=1)
+        return np.flip(paths, axis=1)
 
     elif end[0] < start[0]:
-        return np.flip(trajectories, axis=1)
+        return np.flip(paths, axis=1)
 
-    return trajectories
+    return paths
 
 
 def create_vec(x_value, y_value, scale, sign, start, end):
