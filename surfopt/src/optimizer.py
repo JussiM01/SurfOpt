@@ -18,7 +18,7 @@ class Optimizer:
         self.learning_rate = params['learning_rate']
         self.regular_const = params['regular_const']
         self.plot_changes = params['plot_changes']
-        self.plot_best_traj = params['plot_best']
+        self.plot_best_path = params['plot_best']
         self.plot_results = params['plot_results']
         self.plot_all = params['plot_all']
         self.save_plots = params['save_plots']
@@ -40,7 +40,7 @@ class Optimizer:
         if self.plot_results or self.plot_all:
             self._create_results_plot()
 
-        if self.plot_best_traj or self.plot_all:
+        if self.plot_best_path or self.plot_all:
             self._create_best_path_plot()
 
         best_index = self._best_indices[-1]
@@ -54,14 +54,14 @@ class Optimizer:
         paths = sampler()
         self._device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        self._num_trajs = paths.shape[0]
+        self._num_paths = paths.shape[0]
         self._num_steps = paths.shape[1]
         self._starts = paths[:,0:1,:]
         self._ends = paths[:,-1:,:]
-        self._inside_trajs = torch.from_numpy(
+        self._inside_paths = torch.from_numpy(
             paths[:,1:-1,:]).to(self._device).requires_grad_(True)
         self._surfacemap = SurfaceMap(surface_params)
-        self._optimizer = self._set_optimizer(self._inside_trajs)
+        self._optimizer = self._set_optimizer(self._inside_paths)
         self._start_xys = torch.from_numpy(paths[:,0,:]).to(
             self._device)
         self._end_xys = torch.from_numpy(paths[:,-1,:]).to(self._device)
@@ -82,26 +82,26 @@ class Optimizer:
         self._best_indices = []
         self._paths_copies = []
 
-    def _set_optimizer(self, inside_trajs):
+    def _set_optimizer(self, inside_paths):
 
         if self.optim_type == 'Adam':
-            return torch.optim.Adam([inside_trajs], lr=self.learning_rate)
+            return torch.optim.Adam([inside_paths], lr=self.learning_rate)
 
         elif self.optim_type == 'AdamW':
-            return torch.optim.AdamW([inside_trajs], lr=self.learning_rate)
+            return torch.optim.AdamW([inside_paths], lr=self.learning_rate)
 
         elif self.optim_type == 'SGD':
-            return torch.optim.SGD([inside_trajs], lr=self.learning_rate)
+            return torch.optim.SGD([inside_paths], lr=self.learning_rate)
 
     def _optim_step(self):
 
-        self._copy_trajs()
-        in_hs = torch.unsqueeze(self._surfacemap(self._inside_trajs), dim=2)
-        in_points = torch.cat([self._inside_trajs, in_hs], dim=2)
+        self._copy_paths()
+        in_hs = torch.unsqueeze(self._surfacemap(self._inside_paths), dim=2)
+        in_points = torch.cat([self._inside_paths, in_hs], dim=2)
         no_ends = torch.cat([self._start_points, in_points], dim=1)
         no_starts =  torch.cat([in_points, self._end_points], dim=1)
 
-        loss = torch.zeros(self._num_trajs).to(self._device)
+        loss = torch.zeros(self._num_paths).to(self._device)
         ds_squares = torch.sum((no_ends -no_starts)**2, dim=2)
         meand_ds2 = torch.mean(ds_squares, dim=1)
         loss += meand_ds2
@@ -115,14 +115,14 @@ class Optimizer:
         self._optimizer.step()
         self._copy_losses(loss, mean_loss)
 
-    def _copy_trajs(self):
+    def _copy_paths(self):
 
-        inside_trajs = deepcopy(self._inside_trajs)
-        inside_trajs = inside_trajs.cpu().detach().numpy()
+        inside_paths = deepcopy(self._inside_paths)
+        inside_paths = inside_paths.cpu().detach().numpy()
         starts = deepcopy(self._starts)
         ends = deepcopy(self._ends)
-        trajs = np.concatenate([starts, inside_trajs, ends], axis=1)
-        self._paths_copies.append(trajs)
+        paths = np.concatenate([starts, inside_paths, ends], axis=1)
+        self._paths_copies.append(paths)
 
     def _copy_losses(self, loss, mean_loss):
 
@@ -145,7 +145,7 @@ class Optimizer:
     def _create_changes_plots(self):
 
         colormap = cm.get_cmap('inferno_r', self.num_opt_steps)
-        for i in range(self._num_trajs):
+        for i in range(self._num_paths):
             fig, ax = create_plot(self.fig_params['plot'])
             plt.rcParams['contour.negative_linestyle'] = 'solid'
             X, Y, Z = self._grid
@@ -156,7 +156,7 @@ class Optimizer:
                 ax.plot(xs, ys, color=colormap.colors[j])
             ax.set_title('Optimization of the path {}'.format(i+1))
 
-            self._plot_or_save('changes_plot_traj{}'.format(i+1))
+            self._plot_or_save('changes_plot_path{}'.format(i+1))
 
     def _create_best_path_plot(self):
 
@@ -178,7 +178,7 @@ class Optimizer:
         params['bound'] = None
         fig, ax = create_plot(params)
         xs = [j for j in range(self.num_opt_steps)]
-        for i in range(self._num_trajs):
+        for i in range(self._num_paths):
             label = 'path {} loss'.format(i+1)
             ys = [self._loss_copies['losses'][j][i]
                   for j in range(self.num_opt_steps)]
@@ -189,7 +189,7 @@ class Optimizer:
         ax.set_xlabel('Optimization step')
         ax.set_ylabel('Loss')
         ax.set_title('Losses of the paths and their mean loss')
-        if self._num_trajs <= 10:
+        if self._num_paths <= 10:
             ax.legend()
 
         self._plot_or_save('results_plot')
