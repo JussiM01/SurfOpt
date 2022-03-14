@@ -8,7 +8,7 @@ class Sampler:
     def __init__(self, params):
 
         self.params = params
-        self.trajectories = None
+        self.paths = None
 
     def __call__(self):
 
@@ -17,46 +17,46 @@ class Sampler:
                 sub_params = self.params[mode]
                 sub_params['start'] = self.params['start']
                 sub_params['end'] = self.params['end']
-                trajectories = self._sample(mode, sub_params)
-                self._collect(trajectories)
+                paths = self._sample(mode, sub_params)
+                self._collect(paths)
 
         self._fix_end_values()
 
-        return self.trajectories
+        return self.paths
 
     def _sample(self, mode, params):
 
         if mode == 'arcs':
-            trajectories = sample_arcs(params)
+            paths = sample_arcs(params)
 
         elif mode == 'line':
-            trajectories = sample_line(params)
+            paths = sample_line(params)
 
         elif mode == 'sines':
-            trajectories = sample_sines(params)
+            paths = sample_sines(params)
 
         elif mode == 'sine_sums':
-            trajectories = sample_sine_sums(params)
+            paths = sample_sine_sums(params)
 
         else:
             raise NotImplementedError
 
-        return trajectories
+        return paths
 
-    def _collect(self, trajectories):
+    def _collect(self, paths):
 
-        if self.trajectories is None:
-            self.trajectories = trajectories.astype('float32')
+        if self.paths is None:
+            self.paths = paths.astype('float32')
 
         else:
-            self.trajectories = np.concatenate(
-                (self.trajectories, trajectories.astype('float32')), axis=0)
+            self.paths = np.concatenate(
+                (self.paths, paths.astype('float32')), axis=0)
 
     def _fix_end_values(self):
 
-        self.trajectories[:,0,:] = np.array(
+        self.paths[:,0,:] = np.array(
             self.params['start'], dtype='float32')
-        self.trajectories[:,-1,:] = np.array(
+        self.paths[:,-1,:] = np.array(
             self.params['end'], dtype='float32')
 
 
@@ -77,10 +77,10 @@ if __name__ == '__main__':
     parser.add_argument('-us', '--use_sines', action='store_true')
     parser.add_argument('-uss', '--use_sine_sums', action='store_true')
     parser.add_argument('-c', '--constants', type=str, default='1.0,1.0,1.0')
-    parser.add_argument('-m', '--multiples', type=str, default='0,1,-1')
+    parser.add_argument('-m', '--multiples', type=str, default='1,-1')
     parser.add_argument('-u', '--up_ranges', type=str, default='1.0,1.0,1.0')
     parser.add_argument('-nsa', '--num_samples', type=int, default=10)
-    parser.add_argument('-na', '--num_angles', type=int, default=4)
+    parser.add_argument('-na', '--num_angles', type=int, default=1)
     parser.add_argument('-mi', '--min_angle', type=int, default=np.pi/18)
     parser.add_argument('-ma', '--max_angle', type=int, default=np.pi/4)
     parser.add_argument('-ns', '--num_steps', type=int, default=50)
@@ -131,9 +131,9 @@ if __name__ == '__main__':
 
 
     sampler = Sampler(params)
-    trajectories = sampler()
+    paths = sampler()
 
-    max_value = max(abs(np.min(trajectories)), np.max(trajectories))
+    max_value = max(abs(np.min(paths)), np.max(paths))
     bound = max_value + 1
 
     fig = plt.figure(figsize=(7, 7))
@@ -142,9 +142,9 @@ if __name__ == '__main__':
     ax.set_ylim(-bound, bound)
     ax.grid(True)
 
-    for i in range(trajectories.shape[0]):
-        x_values = trajectories[i, :, 0]
-        y_values = trajectories[i, :, 1]
+    for i in range(paths.shape[0]):
+        x_values = paths[i, :, 0]
+        y_values = paths[i, :, 1]
         ax.plot(x_values, y_values)
 
     plt.show()

@@ -1,0 +1,92 @@
+{
+    "create_surface": false,
+    "optimizer": {
+        "fig": {
+            "grid": {
+                "x_max": 5.0,
+                "x_min": -5.0,
+                "x_size": 50,
+                "y_max": 2.5,
+                "y_min": -2.5,
+                "y_size": 50
+            },
+            "plot": {
+                "bound": {
+                    "x": 5.0,
+                    "y": 2.5
+                }
+            }
+        },
+        "learning_rate": 0.005,
+        "num_opt_steps": 1000,
+        "optim_type": "SGD",
+        "plot_all": true,
+        "plot_best": true,
+        "plot_changes": false,
+        "plot_results": false,
+        "regular_const": 0.001,
+        "save_plots": false,
+        "saving_name": "gauss2hills_0"
+    },
+    "paths": {
+        "arcs": {
+            "max_angle": 0.7853981633974483,
+            "min_angle": 0.17453292519943295,
+            "num_angles": 1,
+            "num_steps": 50
+        },
+        "end": [
+            2.0,
+            0.0
+        ],
+        "line": {
+            "num_steps": 50
+        },
+        "start": [
+            -2.0,
+            0.0
+        ]
+    },
+    "print_best": true,
+    "surface": {
+        "gauss": {
+            "const": [
+                100.0,
+                100.0
+            ],
+            "cov": [
+                [
+                    [
+                        1.0,
+                        0.0
+                    ],
+                    [
+                        0.0,
+                        1.0
+                    ]
+                ],
+                [
+                    [
+                        1.0,
+                        0.0
+                    ],
+                    [
+                        0.0,
+                        1.0
+                    ]
+                ]
+            ],
+            "mean": [
+                [
+                    -1.0,
+                    0.0
+                ],
+                [
+                    1.0,
+                    0.0
+                ]
+            ]
+        }
+    },
+    "view_surface": false
+}

@@ -1,20 +1,22 @@
 import json
+import os
+import time
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import torch
 
 
-def write_config(data, filename):
+def write(data, filename, dir):
 
-    config_file = os.path.join('surfopt/config_files',  filename)
+    config_file = os.path.join('surfopt', dir,  filename)
     with open(config_file, 'w') as f:
         json.dump(data, f, indent=4, sort_keys=True)
 
 
-def load_config(filename):
+def load(filename, dir):
 
-    config_file = os.path.join('surfopt/config_files',  filename)
+    config_file = os.path.join('surfopt', dir,  filename)
     with open(config_file, 'r') as conf_file:
         config = json.load(conf_file)
 
@@ -112,7 +114,7 @@ def sample_line(params):
     params['constants'] = [1.0]
     params['multiples'] = [0]
     line = sample_sines(params)
-    
+
     return line
 
 
@@ -205,15 +207,15 @@ def reorder(start, end):
     return start, end
 
 
-def original_order(trajectories, start, end):
+def original_order(paths, start, end):
 
     if (end[0] == start[0]) and (end[1] < start[1]):
-        return np.flip(trajectories, axis=1)
+        return np.flip(paths, axis=1)
 
     elif end[0] < start[0]:
-        return np.flip(trajectories, axis=1)
+        return np.flip(paths, axis=1)
 
-    return trajectories
+    return paths
 
 
 def create_vec(x_value, y_value, scale, sign, start, end):

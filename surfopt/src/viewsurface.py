@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 
 from src.surfacemap import SurfaceMap
-from src.utils import create_grid, load_config
+from src.utils import create_grid, load
 
 
 def view(params):
 
-    data = load_config(params['conf_file'])
+    data = load(params['conf_file'], 'config_files')
     surfacemap = SurfaceMap(data)
     X, Y, Z = create_grid(params['grid'], surfacemap)
     fig = plt.figure(figsize=(7, 9))
