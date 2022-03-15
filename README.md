@@ -185,7 +185,7 @@ points. This is the only method which uses random sampling.
 
   Description: The first string value ```<multiples>``` tells the multiplicities
   of the each sine tern sampled for the sum. The second string value ```<up ranges>```
-  tells the uper bounds of the ranges where their constants are sampled form (the
+  tells the upper bounds of the ranges where their constants are sampled form (the
   lower bound is zero for all of them). The last int term tells how many sine sums
   will be sampled.
 
