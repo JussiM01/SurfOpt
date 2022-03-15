@@ -1,6 +1,6 @@
 # SurfOpt
 
-Experiments with gradient descent based path optimization on differentiable
+Experiments with gradient descent based path planning on differentiable
 surfaces.
 
 ## Intro
@@ -53,7 +53,7 @@ The start and end point of the paths can be changed with the args ```-x0```
 (or ```--start_x```), ```-y0``` (or ```--start_y```), ```-x1``` (or ```--end_x```)
 and ```-y1``` (or ```--end_y```) as follows:
 ```
-python3 surfopt -x0 <x0> -y0 <y0> -x1 <x1> -y0 <y1>
+python3 surfopt -x0 <x0> -y0 <y0> -x1 <x1> -y1 <y1>
 ```
 where ```<x0>``` and ```<y0>``` are the float values of the starting point
 and ```<x1>```and ```<y1>``` are similar values for the end point.
@@ -67,7 +67,7 @@ by using:
 python3 surfopt -f <filename>
 ```
 where ```<filename>``` is the name of the config-file without the file
-extension. These files can be found from the directory ```surfopt/config_files```.
+extension. These files can be found from the [directory](surfopt/config_files) ```surfopt/config_files```.
 
 The default filename is ```gauss_updown```.
 
@@ -185,7 +185,7 @@ points. This is the only method which uses random sampling.
 
   Description: The first string value ```<multiples>``` tells the multiplicities
   of the each sine tern sampled for the sum. The second string value ```<up ranges>```
-  tells the uper bounds of the ranges where their constants are sampled form (the
+  tells the upper bounds of the ranges where their constants are sampled form (the
   lower bound is zero for all of them). The last int term tells how many sine sums
   will be sampled.
 
@@ -231,8 +231,8 @@ parameters use:
 python3 surfopt -pf <filename>
 ```
 where ```<filename>``` is the name of the parameter file which are located at
-the directory ```surfopt/saved_params```. Each file name contains the name of
-the surface it uses.
+the [directory](surfopt/saved_params) ```surfopt/saved_params```. Each file name
+contains the name of the surface it uses.
 
 ### Plotting
 There are several plotting options. Its possible to plot the changes which
@@ -280,6 +280,14 @@ If there are several plots chosen the next plot is always shown only after the
 previous plot has been closed, which can be done by pressing ```q``` on the
 keyboard or by clicking the ```X``` on the plot window.
 
+Alternatively the plots can be also saved. For this use:
+```
+python3 surfopt <args & values> -s
+```
+which will create a directory ```surfopt\plots\<timestamp>``` and save the plots
+there. The name ```<timestamp>``` is a string representation of current time
+and has the following format: ```"%Y_%m_%d_%Z_%H_%M_%S"```.
+
 ### Saving the parameters
 ```
 python3 surfopt <args and values> -sp -sn <name for the params file>
@@ -296,10 +304,10 @@ Optionally, this can be also done without giving any name for the file:
 ```
 python3 surfopt <args and values> -sp
 ```
-This selects the file name according to current time. In both cases, if the plot
-saving option is used, the plots are saved to folder ```surfopt/plots/<name>```
-where ```<name>``` is the name given after ```-sn``` arg or time based name
-in the other case.
+This selects the file name according to current time (the same ```<timestamp>```
+format as mentioned earlier). In both cases, if the plot saving option is used,
+the plots are saved to folder ```surfopt/plots/<name>``` where ```<name>``` is
+the name given after ```-sn``` arg or the time based name in the later case.
 
 ### Creating random surfaces
 It's possible create random surfaces. These are made of gaussian bump functions.
@@ -308,7 +316,7 @@ bump functions are added together to create a surface.
 
 For making one with the default parameters and a random seed use:
 ```
-python3 surfopt -c -r <seed value>
+python3 surfopt -cs -r <seed value>
 ```
 (or use ```--create_surface``` and ```--random_seed```) where ```<seed value>```
 is the int value of the seed.
@@ -344,7 +352,7 @@ seed (for conciseness the scale parameter is not used).
 
 Example:
 ```
-python3 surfopt -c -r 0 -ng 5
+python3 surfopt -cs -r 0 -ng 5
 ```
 This creates a surface with 5 randomly selected positive and negative gaussian
 bump functions (whose terms are sampled from the default ranges) and saves it
@@ -365,10 +373,10 @@ python3 -m pytest
 ```
 
 ## Convergence properties
-The optimizer type seems to matter. Although ```Adam``` and ```AdamW``` seem to
-converge faster and be less prone to divergence they also seem to converge
-towards unnatural looking paths, at least in some cases. Thus ```SGD```seems to
-be better choice for this algorithm.
+The optimizer type matters. Although ```Adam``` and ```AdamW``` seems to converge
+faster and be less prone to divergence they also tend to converge towards unnatural
+looking paths, at least in some cases. Thus ```SGD``` seems to be better choice
+for this algorithm.
 
 Sampling of several paths is needed since it's possible that some paths converge
 very well and some start to diverge very badly even when they share the same
