@@ -1,6 +1,6 @@
 # SurfOpt
 
-Experiments with gradient descent based path optimization on differentiable
+Experiments with gradient descent based path planning on differentiable
 surfaces.
 
 ## Intro
