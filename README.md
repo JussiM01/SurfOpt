@@ -308,7 +308,7 @@ bump functions are added together to create a surface.
 
 For making one with the default parameters and a random seed use:
 ```
-python3 surfopt -c -r <seed value>
+python3 surfopt -cs -r <seed value>
 ```
 (or use ```--create_surface``` and ```--random_seed```) where ```<seed value>```
 is the int value of the seed.
