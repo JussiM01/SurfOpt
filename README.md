@@ -304,10 +304,10 @@ Optionally, this can be also done without giving any name for the file:
 ```
 python3 surfopt <args and values> -sp
 ```
-This selects the file name according to current time. In both cases, if the plot
-saving option is used, the plots are saved to folder ```surfopt/plots/<name>```
-where ```<name>``` is the name given after ```-sn``` arg or the time based name
-in the later case.
+This selects the file name according to current time (the same ```<timestamp>```
+format as mentioned earlier). In both cases, if the plot saving option is used,
+the plots are saved to folder ```surfopt/plots/<name>``` where ```<name>``` is
+the name given after ```-sn``` arg or the time based name in the later case.
 
 ### Creating random surfaces
 It's possible create random surfaces. These are made of gaussian bump functions.
