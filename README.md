@@ -286,7 +286,7 @@ python3 surfopt <args & values> -s
 ```
 which will create a directory ```surfopt\plots\<timestamp>``` and save the plots
 there. The name ```<timestamp>``` is a string representation of current time
-and has of the form ```"%Y_%m_%d_%Z_%H_%M_%S"```.
+and has the following format: ```"%Y_%m_%d_%Z_%H_%M_%S"```.
 
 ### Saving the parameters
 ```
@@ -306,8 +306,8 @@ python3 surfopt <args and values> -sp
 ```
 This selects the file name according to current time. In both cases, if the plot
 saving option is used, the plots are saved to folder ```surfopt/plots/<name>```
-where ```<name>``` is the name given after ```-sn``` arg or a time based name in
-the later case.
+where ```<name>``` is the name given after ```-sn``` arg or the time based name
+in the later case.
 
 ### Creating random surfaces
 It's possible create random surfaces. These are made of gaussian bump functions.
