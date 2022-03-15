@@ -285,7 +285,8 @@ Alternatively the plots can be also saved. For this use:
 python3 surfopt <args & values> -s
 ```
 which will create a directory ```surfopt\plots\<timestamp>``` and save the plots
-there.
+there. The name ```<timestamp>``` is a string representation of current time
+and has of the form ```"%Y_%m_%d_%Z_%H_%M_%S"```.
 
 ### Saving the parameters
 ```
