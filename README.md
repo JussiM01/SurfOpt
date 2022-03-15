@@ -53,7 +53,7 @@ The start and end point of the paths can be changed with the args ```-x0```
 (or ```--start_x```), ```-y0``` (or ```--start_y```), ```-x1``` (or ```--end_x```)
 and ```-y1``` (or ```--end_y```) as follows:
 ```
-python3 surfopt -x0 <x0> -y0 <y0> -x1 <x1> -y0 <y1>
+python3 surfopt -x0 <x0> -y0 <y0> -x1 <x1> -y1 <y1>
 ```
 where ```<x0>``` and ```<y0>``` are the float values of the starting point
 and ```<x1>```and ```<y1>``` are similar values for the end point.
