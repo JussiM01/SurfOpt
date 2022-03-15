@@ -305,7 +305,7 @@ python3 surfopt <args and values> -sp
 ```
 This selects the file name according to current time. In both cases, if the plot
 saving option is used, the plots are saved to folder ```surfopt/plots/<name>```
-where ```<name>``` is the name given after ```-sn``` arg ora time based name in
+where ```<name>``` is the name given after ```-sn``` arg or a time based name in
 the later case.
 
 ### Creating random surfaces
