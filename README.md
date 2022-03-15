@@ -280,6 +280,14 @@ If there are several plots chosen the next plot is always shown only after the
 previous plot has been closed, which can be done by pressing ```q``` on the
 keyboard or by clicking the ```X``` on the plot window.
 
+Alternatively the plots can be also saved. For this use:
+```
+python3 surfopt <args & values> -s
+```
+which will create a directory ```surfopt\plots\<timestamp>``` and save the plots
+there. The plot files will have the same ```<timestamp>``` as a prefix in their
+names.
+
 ### Saving the parameters
 ```
 python3 surfopt <args and values> -sp -sn <name for the params file>
