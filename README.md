@@ -344,7 +344,7 @@ seed (for conciseness the scale parameter is not used).
 
 Example:
 ```
-python3 surfopt -c -r 0 -ng 5
+python3 surfopt -cs -r 0 -ng 5
 ```
 This creates a surface with 5 randomly selected positive and negative gaussian
 bump functions (whose terms are sampled from the default ranges) and saves it
