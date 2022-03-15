@@ -67,7 +67,7 @@ by using:
 python3 surfopt -f <filename>
 ```
 where ```<filename>``` is the name of the config-file without the file
-extension. These files can be found from the directory ```surfopt/config_files```.
+extension. These files can be found from the [directory](surfopt/config_files) ```surfopt/config_files```.
 
 The default filename is ```gauss_updown```.
 
