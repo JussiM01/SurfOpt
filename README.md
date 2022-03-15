@@ -231,8 +231,8 @@ parameters use:
 python3 surfopt -pf <filename>
 ```
 where ```<filename>``` is the name of the parameter file which are located at
-the directory ```surfopt/saved_params```. Each file name contains the name of
-the surface it uses.
+the [directory](surfopt/saved_params) ```surfopt/saved_params```. Each file name
+contains the name of the surface it uses.
 
 ### Plotting
 There are several plotting options. Its possible to plot the changes which
