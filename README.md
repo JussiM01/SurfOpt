@@ -306,8 +306,8 @@ python3 surfopt <args and values> -sp
 ```
 This selects the file name according to current time. In both cases, if the plot
 saving option is used, the plots are saved to folder ```surfopt/plots/<name>```
-where ```<name>``` is the name given after ```-sn``` arg or time based name
-in the other case.
+where ```<name>``` is the name given after ```-sn``` arg or the time based name
+in the later case.
 
 ### Creating random surfaces
 It's possible create random surfaces. These are made of gaussian bump functions.
@@ -373,10 +373,10 @@ python3 -m pytest
 ```
 
 ## Convergence properties
-The optimizer type seems to matter. Although ```Adam``` and ```AdamW``` seem to
-converge faster and be less prone to divergence they also seem to converge
-towards unnatural looking paths, at least in some cases. Thus ```SGD```seems to
-be better choice for this algorithm.
+The optimizer type matters. Although ```Adam``` and ```AdamW``` seems to converge
+faster and be less prone to divergence they also tend to converge towards unnatural
+looking paths, at least in some cases. Thus ```SGD``` seems to be better choice
+for this algorithm.
 
 Sampling of several paths is needed since it's possible that some paths converge
 very well and some start to diverge very badly even when they share the same
